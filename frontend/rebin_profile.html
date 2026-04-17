@@ -1,0 +1,2190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReBin – My Profile</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="responsive.css" />
+    <style>
+        :root {
+            --green: #16a34a;
+            --green-light: #4ade80;
+            --green-pale: #f0fdf4;
+            --green-mid: #dcfce7;
+            --green-border: #bbf7d0;
+            --shadow: 0 2px 24px rgba(0, 0, 0, 0.07);
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #eaf7ee;
+            min-height: 100vh;
+            color: #1a2e1a;
+        }
+
+        /* ══════════ LOGIN SCREEN ══════════ */
+        #login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #c8e6c0;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Nunito', 'Inter', sans-serif;
+            gap: 32px;
+            padding: 80px 40px 40px;
+        }
+
+        /* Sky gradient */
+        .sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 75%;
+            background: linear-gradient(180deg, #a8d5a2 0%, #dcfce7 100%);
+            z-index: 1;
+        }
+
+        /* Buildings */
+        .bldg {
+            position: absolute;
+            bottom: 25%;
+            background: #2d6a47;
+            border-radius: 4px 4px 0 0;
+            z-index: 2;
+        }
+
+        .bldg-win {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fef08a;
+            border-radius: 1px;
+            animation: winBlink 3s ease-in-out infinite;
+        }
+
+        @keyframes winBlink {
+
+            0%,
+            90%,
+            100% {
+                opacity: 1;
+            }
+
+            92%,
+            98% {
+                opacity: 0.3;
+            }
+        }
+
+        .b1 {
+            left: 5%;
+            width: 60px;
+            height: 120px;
+        }
+
+        .b2 {
+            left: 15%;
+            width: 40px;
+            height: 80px;
+            background: #3d7a58;
+        }
+
+        .b3 {
+            left: 25%;
+            width: 50px;
+            height: 140px;
+            background: #1e4f32;
+        }
+
+        /* Trees */
+        .tree {
+            position: absolute;
+            bottom: 25%;
+            z-index: 3;
+        }
+
+        .leaves {
+            width: 40px;
+            height: 40px;
+            background: #16a34a;
+            border-radius: 50%;
+            margin-bottom: -5px;
+        }
+
+        /* Ground */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 25%;
+            background: #4ade80;
+            z-index: 4;
+        }
+
+        /* Road */
+        .road {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: #334155;
+            border-top: 5px solid #475569;
+            z-index: 5;
+        }
+
+        /* Road Lines */
+        .road-line-container {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 200%;
+            height: 6px;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: space-around;
+            animation: roadScroll 3s linear infinite;
+        }
+
+        .dash {
+            width: 60px;
+            height: 6px;
+            background: #fde047;
+            border-radius: 3px;
+        }
+
+        @keyframes roadScroll {
+            from {
+                transform: translate(0, -50%);
+            }
+
+            to {
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* Truck */
+        .truck-wrap {
+            position: absolute;
+            bottom: 30px;
+            z-index: 10;
+            animation: truckDrive 10s linear infinite;
+        }
+
+        @keyframes truckDrive {
+            from {
+                left: -200px;
+            }
+
+            to {
+                left: 100vw;
+            }
+        }
+
+        /* Tagline */
+        .tagline {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 24px;
+            border-radius: 40px;
+            z-index: 20;
+            color: #166534;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-size: 1.2rem;
+            white-space: nowrap;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
+            position: relative;
+            z-index: 30;
+        }
+
+        .login-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 34px;
+            font-weight: 800;
+            color: var(--green);
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .login-logo span {
+            color: #111;
+        }
+
+        .login-sub {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px;
+            margin-bottom: 26px;
+        }
+
+        .role-toggle {
+            display: flex;
+            gap: 4px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            background: transparent;
+            color: #6b7280;
+            transition: all .2s;
+        }
+
+        .role-btn.active {
+            background: var(--green);
+            color: white;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btns {
+            display: flex;
+            gap: 4px;
+            background: #f3f4f6;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 22px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            background: transparent;
+            color: #6b7280;
+            transition: all .2s;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #111827;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #374151;
+            margin-bottom: 5px;
+            letter-spacing: .8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Nunito', sans-serif;
+            outline: none;
+            transition: border .2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--green);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--green), #15803d);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            font-family: 'Syne', sans-serif;
+            cursor: pointer;
+            letter-spacing: .8px;
+            transition: all .2s;
+            margin-top: 4px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(22, 163, 74, 0.3);
+        }
+
+        .switch-text {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .switch-text a {
+            color: var(--green);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .err-box {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 14px;
+            display: none;
+        }
+
+        .register-extra {
+            display: none;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        /* ══════════ NAVBAR ══════════ */
+        #profile-screen {
+            display: none;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #0a1f12;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            height: 60px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-loc {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: #86efac;
+            font-weight: 600;
+            background: rgba(74, 222, 128, 0.08);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(74, 222, 128, 0.18);
+        }
+
+        .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-logo {
+            font-family: 'Syne', sans-serif;
+            color: #4ade80;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .nav-logo span {
+            color: #fff;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            color: #6aad85;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: 1.2px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all .2s;
+        }
+
+        .nav-links a:hover {
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.08);
+        }
+
+        .nav-links a.active {
+            color: #0a1f12;
+            background: #4ade80;
+        }
+
+        .nav-cart {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 7px 16px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+            transition: all .2s;
+        }
+
+        .nav-cart:hover {
+            background: #dc2626;
+        }
+
+        .nav-warehouse-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            padding: 7px 16px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            font-family: 'Syne', sans-serif;
+            transition: all .2s;
+            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
+            animation: warehousePulse 2.5s ease-in-out infinite;
+        }
+
+        .nav-warehouse-btn:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            animation: none;
+        }
+
+        @keyframes warehousePulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 0 7px rgba(245, 158, 11, 0);
+            }
+        }
+
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3a6e, #1e40af);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: #93c5fd;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            cursor: pointer;
+        }
+
+        /* ══════════ MAIN LAYOUT ══════════ */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 28px 24px 60px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* ══════════ CARDS ══════════ */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .card:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ══════════ PROFILE CARD ══════════ */
+        .profile-card {
+            padding: 28px 24px;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            width: 84px;
+            height: 84px;
+            margin: 0 auto 14px;
+        }
+
+        .avatar-circle {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c7d2fe, #bfdbfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 34px;
+            font-weight: 800;
+            color: #1e40af;
+            border: 3px solid #dbeafe;
+        }
+
+        .online-dot {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #22c55e;
+            border: 2.5px solid white;
+        }
+
+        .prof-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: #111;
+            text-align: center;
+            margin-bottom: 3px;
+        }
+
+        .prof-uname {
+            font-size: 12px;
+            color: #9ca3af;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .level-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: 1px solid #bbf7d0;
+            margin: 0 auto 20px;
+            display: block;
+            width: fit-content;
+            margin: 0 auto 20px;
+        }
+
+        .divider {
+            height: 1px;
+            background: #f3f4f6;
+            margin: 4px 0 18px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .info-ico {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .ic-ph {
+            background: #fee2e2;
+        }
+
+        .ic-em {
+            background: #e0f2fe;
+        }
+
+        .ic-dt {
+            background: #ede9fe;
+        }
+
+        .ic-lc {
+            background: #fef3c7;
+        }
+
+        .info-lbl {
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .info-val {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            width: 100%;
+            margin-top: 18px;
+            padding: 10px;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .btn-logout:hover {
+            background: #fee2e2;
+        }
+
+        /* ══════════ ADDRESS CARD ══════════ */
+        .address-card {
+            padding: 20px 22px;
+        }
+
+        .sec-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            color: #9ca3af;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .addr-item {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #15803d;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .btn-add-addr {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            color: var(--green);
+            border: 1.5px dashed #bbf7d0;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .btn-add-addr:hover {
+            background: #f0fdf4;
+        }
+
+        .addr-form {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .addr-form input {
+            padding: 10px 12px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Nunito', sans-serif;
+            outline: none;
+        }
+
+        .addr-form input:focus {
+            border-color: var(--green);
+        }
+
+        .addr-form-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save-a {
+            flex: 1;
+            padding: 9px;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .btn-cancel-a {
+            padding: 9px 14px;
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* ══════════ RIGHT COLUMN ══════════ */
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+
+        .panel-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            color: #9ca3af;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* more btn */
+        .more-btn {
+            position: fixed;
+            top: 74px;
+            right: 24px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: #6b7280;
+            font-weight: 900;
+            z-index: 50;
+        }
+
+        /* ══════════ STATS ══════════ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            border-radius: 12px;
+            padding: 18px 16px;
+        }
+
+        .stat-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 4px;
+        }
+
+        .stat-lbl {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        /* ══════════ POINTS BAR ══════════ */
+        .pts-box {
+            margin-top: 18px;
+            background: #fafdf7;
+            border: 1px solid #dcfce7;
+            border-radius: 12px;
+            padding: 16px 18px;
+        }
+
+        .pts-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .pts-label {
+            font-size: 14px;
+            font-weight: 800;
+            color: #111;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pts-label em {
+            color: var(--green);
+            font-style: normal;
+        }
+
+        .pts-next-lbl {
+            font-size: 12px;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+
+        .bar-bg {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #16a34a, #4ade80);
+            width: 0%;
+            transition: width 1.2s ease;
+        }
+
+        .pts-hint {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .pts-hint strong {
+            color: var(--green);
+        }
+
+        /* ══════════ ACTIVITY ══════════ */
+        .act-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .act-item:last-child {
+            border-bottom: none;
+        }
+
+        .act-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .act-desc {
+            flex: 1;
+            font-size: 13px;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .act-time {
+            font-size: 11px;
+            color: #9ca3af;
+            white-space: nowrap;
+        }
+
+        .act-pts {
+            font-size: 13px;
+            font-weight: 800;
+            white-space: nowrap;
+            min-width: 68px;
+            text-align: right;
+        }
+
+        .pts-earn {
+            color: #16a34a;
+        }
+
+        .pts-redeem {
+            color: #ef4444;
+        }
+
+        .pts-pending {
+            color: #f97316;
+        }
+
+        /* ══════════ BADGES ══════════ */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .badge-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-ico {
+            width: 58px;
+            height: 58px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            transition: transform .2s;
+        }
+
+        .badge-ico:hover {
+            transform: scale(1.08);
+        }
+
+        .badge-ico.earned {
+            background: #dcfce7;
+            border: 2px solid #86efac;
+        }
+
+        .badge-ico.locked {
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            filter: grayscale(1) opacity(.45);
+        }
+
+        .badge-nm {
+            font-size: 10px;
+            color: #374151;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .badge-nm.locked {
+            color: #9ca3af;
+        }
+
+        /* ══════════ LOADING ══════════ */
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e5e7eb;
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-msg {
+            text-align: center;
+            padding: 30px;
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .err-panel {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .err-panel p {
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .err-panel small {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        /* ══════════ LOGOUT BTN ══════════ */
+        .btn-logout {
+            display: block;
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #dc2626;
+            border: 1.5px solid #fca5a5;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+        }
+
+        /* ── SCRAP CALCULATOR PANEL ── */
+        .scrap-calc-panel {
+            position: relative;
+            z-index: 30;
+            display: flex;
+            align-items: stretch;
+            pointer-events: all;
+            width: 420px;
+            flex-shrink: 0;
+        }
+
+        .scrap-calc-inner {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 28px 26px;
+            width: 100%;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .scrap-calc-inner::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .scrap-calc-inner::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrap-calc-inner::-webkit-scrollbar-thumb {
+            background: #bbf7d0;
+            border-radius: 99px;
+        }
+
+        .calc-header {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: #166534;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .calc-sub {
+            font-size: 12px;
+            color: #9ca3af;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        .calc-search {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #bbf7d0;
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: 'Nunito', sans-serif;
+            outline: none;
+            background: #f0fdf4;
+            margin-bottom: 14px;
+            transition: border .2s;
+        }
+
+        .calc-search:focus {
+            border-color: var(--green);
+        }
+
+        .calc-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .calc-items-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .calc-items-list::-webkit-scrollbar-thumb {
+            background: #dcfce7;
+            border-radius: 99px;
+        }
+
+        .calc-item-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        .calc-item-row.hidden {
+            display: none;
+        }
+
+        .calc-item-name {
+            flex: 1;
+            font-weight: 700;
+            color: #166534;
+            font-size: 12px;
+        }
+
+        .calc-item-price {
+            font-size: 11px;
+            color: #6b7280;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .calc-item-input {
+            width: 64px;
+            padding: 5px 8px;
+            border: 1.5px solid #bbf7d0;
+            border-radius: 7px;
+            font-size: 12px;
+            font-family: 'Nunito', sans-serif;
+            outline: none;
+            text-align: center;
+            background: white;
+            transition: border .2s;
+        }
+
+        .calc-item-input:focus {
+            border-color: var(--green);
+        }
+
+        .calc-result-box {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .calc-result-label {
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: .5px;
+        }
+
+        .calc-result-amount {
+            font-family: 'Syne', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .calc-reset-btn {
+            margin-top: 10px;
+            width: 100%;
+            padding: 9px;
+            background: transparent;
+            color: var(--green);
+            border: 1.5px dashed #bbf7d0;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .calc-reset-btn:hover {
+            background: #f0fdf4;
+        }
+
+        /* ── WAREHOUSE BUTTON (login screen, top-right) ── */
+        .login-warehouse-btn {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            z-index: 50;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+            animation: loginWhPulse 2.5s ease-in-out infinite;
+            transition: all .2s;
+        }
+
+        .login-warehouse-btn:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 28px rgba(245, 158, 11, 0.55);
+            animation: none;
+        }
+
+        @keyframes loginWhPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 4px 30px rgba(245, 158, 11, 0.7);
+            }
+        }
+
+        /* ── closes @keyframes loginWhPulse ── */
+
+        /* ══════════════════════════════════════
+           RESPONSIVE MEDIA QUERIES
+        ══════════════════════════════════════ */
+
+        /* Tablet - stack the two-column layout */
+        @media (max-width: 900px) {
+            .main {
+                grid-template-columns: 1fr !important;
+                padding: 18px 16px 50px !important;
+            }
+
+            .navbar {
+                padding: 0 16px !important;
+            }
+
+            .nav-center {
+                position: static !important;
+                transform: none !important;
+            }
+
+            .nav-links {
+                display: none !important;
+            }
+
+            .nav-warehouse-btn,
+            .nav-cart {
+                display: none !important;
+            }
+        }
+
+        /* Mobile - login screen + small tweaks */
+        @media (max-width: 560px) {
+            #login-screen {
+                padding: 56px 12px 24px !important;
+                gap: 0 !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: flex-end !important;
+            }
+
+            .login-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 20px !important;
+                padding: 28px 18px !important;
+                margin-bottom: 16px;
+            }
+
+            .login-logo {
+                font-size: 28px !important;
+            }
+
+            .tagline {
+                font-size: 13px !important;
+                padding: 8px 14px !important;
+                white-space: normal !important;
+                text-align: center !important;
+                width: calc(100% - 24px) !important;
+                left: 12px !important;
+                transform: none !important;
+                top: 10px !important;
+                border-radius: 16px !important;
+            }
+
+            .b1,
+            .b2,
+            .b3 {
+                opacity: 0.5;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .login-card {
+                padding: 22px 14px !important;
+            }
+
+            .role-toggle {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .tab-btns {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  LOGIN / REGISTER SCREEN                       -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div id="login-screen">
+        <div class="sky"></div>
+        <div class="tagline">"Because Every Waste Deserves a Second Life."</div>
+
+        <div class="bldg b1">
+            <div class="bldg-win" style="top:15px;left:15px;"></div>
+        </div>
+        <div class="bldg b2">
+            <div class="bldg-win" style="top:20px;left:10px;"></div>
+        </div>
+        <div class="bldg b3">
+            <div class="bldg-win" style="top:25px;left:20px;"></div>
+        </div>
+
+        <div class="tree" style="left:40%;">
+            <div class="leaves"></div>
+        </div>
+        <div class="tree" style="left:70%;">
+            <div class="leaves"></div>
+        </div>
+
+        <div class="ground"></div>
+
+        <div class="road">
+            <div class="road-line-container">
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+                <div class="dash"></div>
+            </div>
+        </div>
+
+        <div class="truck-wrap">
+            <svg width="150" height="75" viewBox="0 0 160 80">
+                <rect x="10" y="10" width="100" height="50" rx="5" fill="#166534" />
+                <rect x="110" y="25" width="40" height="35" rx="5" fill="#14532d" />
+                <rect x="115" y="30" width="22" height="15" rx="2" fill="#a8e6cf" />
+                <text x="60" y="45" text-anchor="middle" font-size="20">♻️</text>
+                <circle cx="35" cy="65" r="12" fill="#1e293b" />
+                <circle cx="125" cy="65" r="12" fill="#1e293b" />
+            </svg>
+        </div>
+
+        <!-- ── WAREHOUSE BUTTON ── -->
+        <a href="rebin_warehouse.html" class="login-warehouse-btn" id="login-wh-btn">
+            🏭 WAREHOUSE
+        </a>
+
+        <!-- ── SCRAP PRICE CALCULATOR ── -->
+        <div class="scrap-calc-panel">
+            <div class="scrap-calc-inner">
+                <div class="calc-header">♻️ Scrap Price Calculator</div>
+                <div class="calc-sub">Enter weight (kg) for each material to calculate total earnings</div>
+
+                <input type="text" class="calc-search" id="calcSearch"
+                    placeholder="🔍 Search material e.g. Paper, Copper..." oninput="filterCalcItems()" />
+
+                <div class="calc-items-list" id="calcItemsList">
+                    <div class="calc-item-row" data-tags="paper newspaper" data-price="11.5">
+                        <span class="calc-item-name">📄 Newspaper</span>
+                        <span class="calc-item-price">₹10–13/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="paper books" data-price="10">
+                        <span class="calc-item-name">📚 Books/Paper</span>
+                        <span class="calc-item-price">₹7–13/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="cardboard box" data-price="14">
+                        <span class="calc-item-name">📦 Cardboard</span>
+                        <span class="calc-item-price">₹10–18/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="plastic mixed" data-price="11">
+                        <span class="calc-item-name">🧴 Plastic Mixed</span>
+                        <span class="calc-item-price">₹10–12/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="plastic bottle" data-price="12">
+                        <span class="calc-item-name">🍶 Plastic Bottles</span>
+                        <span class="calc-item-price">₹12/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="plastic bags" data-price="5">
+                        <span class="calc-item-name">🛍️ Plastic Bags</span>
+                        <span class="calc-item-price">₹5/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="plastic hard" data-price="4">
+                        <span class="calc-item-name">🪣 Hard Plastic</span>
+                        <span class="calc-item-price">₹2–6/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="copper wire metal" data-price="975">
+                        <span class="calc-item-name">🥇 Copper</span>
+                        <span class="calc-item-price">₹750–1200/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="iron steel mild metal" data-price="31">
+                        <span class="calc-item-name">⚙️ Mild Steel</span>
+                        <span class="calc-item-price">₹22–40/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="iron steel stainless" data-price="172.5">
+                        <span class="calc-item-name">✨ Stainless Steel</span>
+                        <span class="calc-item-price">₹45–300/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="iron cast ci" data-price="39">
+                        <span class="calc-item-name">🔩 Cast Iron</span>
+                        <span class="calc-item-price">₹33–45/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="e-waste pcb circuit board" data-price="312.5">
+                        <span class="calc-item-name">💻 PCBs</span>
+                        <span class="calc-item-price">₹275–350/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="e-waste electronic mixed" data-price="305">
+                        <span class="calc-item-name">🖥️ Mixed E-Waste</span>
+                        <span class="calc-item-price">₹110–500/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="aluminium wire extrusion" data-price="215">
+                        <span class="calc-item-name">🥤 Aluminium Wire</span>
+                        <span class="calc-item-price">₹180–250/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="aluminium utensil tense" data-price="162.5">
+                        <span class="calc-item-name">🍳 Aluminium Utensil</span>
+                        <span class="calc-item-price">₹130–195/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="clothes garment fabric" data-price="37.5">
+                        <span class="calc-item-name">👗 Clothes</span>
+                        <span class="calc-item-price">₹20–55/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                    <div class="calc-item-row" data-tags="hair" data-price="4000">
+                        <span class="calc-item-name">💇 Hair</span>
+                        <span class="calc-item-price">₹3000–5000/kg</span>
+                        <input type="number" class="calc-item-input" placeholder="kg" min="0" step="0.1"
+                            oninput="updateCalcTotal()" />
+                    </div>
+                </div>
+
+                <div class="calc-result-box">
+                    <div>
+                        <div class="calc-result-label">TOTAL ESTIMATED VALUE</div>
+                        <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;margin-top:2px;">Based on
+                            average market rates</div>
+                    </div>
+                    <div class="calc-result-amount" id="calcTotal">₹0</div>
+                </div>
+
+                <button class="calc-reset-btn" onclick="resetCalc()">↺ Reset All</button>
+            </div>
+        </div>
+
+        <div class="login-card">
+            <div class="login-logo">Re<span>Bin</span></div>
+            <p class="login-sub">♻️ Smart Recycling Platform</p>
+
+            <div class="role-toggle">
+                <button class="role-btn active" id="role-user" onclick="switchRole('user')">User</button>
+                <button class="role-btn" id="role-collector" onclick="switchRole('collector')">Collector</button>
+            </div>
+
+            <div class="tab-btns">
+                <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
+                <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register</button>
+            </div>
+
+            <div id="auth-error" class="err-box"></div>
+
+            <!-- REGISTER-ONLY FIELDS -->
+            <div id="register-extra" class="register-extra">
+                <div class="form-group">
+                    <label>FULL NAME</label>
+                    <input type="text" id="inp-name" placeholder="Kavya Sharma" />
+                </div>
+                <div class="form-group">
+                    <label>USERNAME</label>
+                    <input type="text" id="inp-username" placeholder="kavya_2024" />
+                </div>
+                <div class="form-group">
+                    <label>PHONE</label>
+                    <input type="tel" id="inp-phone" placeholder="+91 98765 43210" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>EMAIL ADDRESS</label>
+                <input type="email" id="inp-email" placeholder="your@email.com" />
+            </div>
+            <div class="form-group">
+                <label>PASSWORD</label>
+                <input type="password" id="inp-password" placeholder="••••••••" />
+            </div>
+
+            <button class="btn-submit" id="btn-auth" onclick="handleAuth()">LOGIN →</button>
+            <p class="switch-text" id="switch-hint">
+                Don't have an account? <a onclick="switchTab('register')">Register here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  PROFILE SCREEN                                -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div id="profile-screen">
+
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="nav-loc" id="nav-loc">📍 Loading... ▾</div>
+            </div>
+            <div class="nav-center">
+                <div class="nav-logo">Re<span>Bin</span></div>
+            </div>
+            <div class="nav-right">
+                <div class="nav-links">
+                    <a href="index.html">HOME</a>
+                    <a href="points.html">POINTS</a>
+                    <a href="leaderboard.html">LEADERBOARD</a>
+                    <a href="about.html">ABOUT</a>
+                    <a href="rebin_profile.html" class="active">PROFILE</a>
+                </div>
+                <a href="rebin_warehouse.html" class="nav-warehouse-btn">🏭 WAREHOUSE</a>
+                <button class="nav-cart">🛒 CART</button>
+                <div class="nav-avatar" id="nav-init">K</div>
+            </div>
+        </nav>
+
+        <button class="more-btn" title="More options">···</button>
+
+        <!-- MAIN 2-COL GRID -->
+        <div class="main">
+
+            <!-- ── LEFT COLUMN ── -->
+            <div>
+
+                <!-- Profile Card -->
+                <div class="card profile-card">
+                    <div id="prof-loading" class="loading-msg">
+                        <div class="spinner"></div>Loading profile...
+                    </div>
+                    <div id="prof-body" style="display:none">
+                        <div class="avatar-wrap">
+                            <div class="avatar-circle" id="p-avatar">K</div>
+                            <div class="online-dot"></div>
+                        </div>
+                        <div class="prof-name" id="p-name">Kavya Sharma</div>
+                        <div class="prof-uname" id="p-uname">@kavya_2024 · RB#00001</div>
+                        <div class="level-pill" id="p-level">⭐ Eco Starter</div>
+
+                        <div class="divider"></div>
+
+                        <div class="info-row">
+                            <div class="info-ico ic-ph">📞</div>
+                            <div>
+                                <div class="info-lbl">Phone</div>
+                                <div class="info-val" id="p-phone">–</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-ico ic-em">✉️</div>
+                            <div>
+                                <div class="info-lbl">Email</div>
+                                <div class="info-val" id="p-email">–</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-ico ic-dt">📅</div>
+                            <div>
+                                <div class="info-lbl">Member since</div>
+                                <div class="info-val" id="p-since">–</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-ico ic-lc">📍</div>
+                            <div>
+                                <div class="info-lbl">Location</div>
+                                <div class="info-val" id="p-loc">–</div>
+                            </div>
+                        </div>
+
+                        <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+                    </div>
+                    <div id="prof-error" style="display:none" class="err-panel">
+                        <p>❌ Cannot connect to backend</p>
+                        <small>Make sure the server is running at localhost:3000</small>
+                    </div>
+                </div>
+
+                <!-- Address Card -->
+                <div class="card address-card">
+                    <div class="sec-title">🏠 PICKUP ADDRESS</div>
+                    <div id="addr-list"></div>
+                    <button class="btn-add-addr" id="btn-show-form" onclick="toggleAddrForm()">+ Add another
+                        address</button>
+                    <div class="addr-form" id="addr-form">
+                        <input type="text" id="f-street" placeholder="Street / Colony / Area" />
+                        <input type="text" id="f-city" placeholder="City" />
+                        <input type="text" id="f-pincode" placeholder="Pincode" />
+                        <div class="addr-form-btns">
+                            <button class="btn-save-a" onclick="saveAddress()">Save Address</button>
+                            <button class="btn-cancel-a" onclick="toggleAddrForm()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── RIGHT COLUMN ── -->
+            <div class="right-col">
+
+                <!-- MY STATS -->
+                <div class="panel">
+                    <div class="panel-title">📊 MY STATS</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-num" id="s-pickups">–</div>
+                            <div class="stat-lbl">Total Pickups</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-num" id="s-waste">–</div>
+                            <div class="stat-lbl">Waste Recycled</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-num" id="s-earned">–</div>
+                            <div class="stat-lbl">Total Earned</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-num" id="s-rank">–</div>
+                            <div class="stat-lbl">Leaderboard Rank</div>
+                        </div>
+                    </div>
+
+                    <!-- Points Bar -->
+                    <div class="pts-box">
+                        <div class="pts-row">
+                            <div class="pts-label">♻️ ReBin Points: <em id="pts-cur">0</em></div>
+                            <div class="pts-next-lbl">Next level: <strong id="pts-next">10,000</strong></div>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill" id="bar-fill"></div>
+                        </div>
+                        <div class="pts-hint" id="pts-hint">– points to reach <strong>next level</strong></div>
+                    </div>
+                </div>
+
+                <!-- RECENT ACTIVITY -->
+                <div class="panel">
+                    <div class="panel-title">🕒 RECENT ACTIVITY</div>
+                    <div id="act-list">
+                        <div class="loading-msg" style="padding:16px">Loading activity...</div>
+                    </div>
+                </div>
+
+                <!-- BADGES -->
+                <div class="panel">
+                    <div class="panel-title">🏅 BADGES EARNED</div>
+                    <div class="badges-grid" id="badges-grid">
+                        <div class="loading-msg" style="grid-column:span 4;padding:16px">Loading badges...</div>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /main -->
+    </div><!-- /profile-screen -->
+
+    <script>
+        /* ── CONFIG ── */
+        const API = '/api';
+        let token = localStorage.getItem('rebin_token');
+        let currentTab = 'login';
+        let currentRole = 'user';
+
+        /* ── INIT ── */
+        if (token) {
+            const storedRole = localStorage.getItem('rebin_role');
+            if (storedRole === 'collector') {
+                window.location.href = 'collector-home.html';
+            } else {
+                showProfileScreen();
+                fetchProfile();
+            }
+        }
+
+        /* ══════════════════════════════════════
+           AUTH
+        ══════════════════════════════════════ */
+        function switchRole(role) {
+            currentRole = role;
+            document.getElementById('role-user').classList.toggle('active', role === 'user');
+            document.getElementById('role-collector').classList.toggle('active', role === 'collector');
+        }
+
+        function switchTab(mode) {
+            currentTab = mode;
+            const isReg = mode === 'register';
+            const extra = document.getElementById('register-extra');
+            extra.style.display = isReg ? 'flex' : 'none';
+            extra.style.flexDirection = 'column';
+            document.getElementById('btn-auth').textContent = isReg ? 'CREATE ACCOUNT →' : 'LOGIN →';
+            document.getElementById('switch-hint').innerHTML = isReg
+                ? 'Already have an account? <a onclick="switchTab(\'login\')">Login here</a>'
+                : 'Don\'t have an account? <a onclick="switchTab(\'register\')">Register here</a>';
+            document.getElementById('tab-login').classList.toggle('active', !isReg);
+            document.getElementById('tab-register').classList.toggle('active', isReg);
+            hideAuthError();
+        }
+
+        function showAuthError(msg) {
+            const el = document.getElementById('auth-error');
+            el.textContent = msg; el.style.display = 'block';
+        }
+        function hideAuthError() {
+            document.getElementById('auth-error').style.display = 'none';
+        }
+
+        async function handleAuth() {
+            hideAuthError();
+            const email = document.getElementById('inp-email').value.trim();
+            const password = document.getElementById('inp-password').value;
+
+            if (!email || !password) {
+                return showAuthError('Please fill all required fields.');
+            }
+
+            const btn = document.getElementById('btn-auth');
+            btn.disabled = true;
+            btn.textContent = 'Please wait...';
+
+            try {
+                if (currentTab === 'register') {
+                    const name = document.getElementById('inp-name').value.trim();
+                    const username = document.getElementById('inp-username').value.trim();
+                    const phone = document.getElementById('inp-phone').value.trim();
+                    if (!name || !username || !phone) {
+                        btn.disabled = false;
+                        btn.textContent = 'CREATE ACCOUNT →';
+                        return showAuthError('Please fill all fields.');
+                    }
+
+                    const r = await fetch(`${API}/auth/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, username, email, password, phone, role: currentRole })
+                    });
+                    const data = await r.json();
+                    if (!r.ok) {
+                        btn.disabled = false;
+                        btn.textContent = 'CREATE ACCOUNT →';
+                        return showAuthError(data.error || 'Registration failed');
+                    }
+                    storeToken(data.token);
+                    localStorage.setItem('rebin_role', data.role);
+                    localStorage.setItem('rebin_user', JSON.stringify(data.user));
+
+                    if (data.role === 'collector') {
+                        window.location.href = 'collector-home.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    const r = await fetch(`${API}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password, role: currentRole })
+                    });
+                    const data = await r.json();
+                    if (!r.ok) {
+                        btn.disabled = false;
+                        btn.textContent = 'LOGIN →';
+                        return showAuthError(data.error || 'Login failed');
+                    }
+                    storeToken(data.token);
+                    localStorage.setItem('rebin_role', data.role);
+                    localStorage.setItem('rebin_user', JSON.stringify(data.user));
+
+                    if (data.role === 'collector') {
+                        window.location.href = 'collector-home.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btn.textContent = currentTab === 'register' ? 'CREATE ACCOUNT →' : 'LOGIN →';
+                showAuthError('Cannot connect to server. Make sure the server is running.');
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none')
+                handleAuth();
+        });
+
+        function storeToken(t) { token = t; localStorage.setItem('rebin_token', t); }
+
+        function showProfileScreen() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('profile-screen').style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.removeItem('rebin_token');
+            localStorage.removeItem('rebin_role');
+            localStorage.removeItem('rebin_user');
+            token = null;
+            document.getElementById('profile-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+        }
+
+        /* ══════════════════════════════════════
+           LOAD PROFILE DATA
+        ══════════════════════════════════════ */
+        async function fetchProfile() {
+            try {
+                const r = await fetch(`${API}/profile`, { headers: { 'authorization': token } });
+
+                if (r.status === 401 || r.status === 404) {
+                    logout();
+                    return;
+                }
+
+                const data = await r.json();
+
+                if (!r.ok) {
+                    throw new Error(data.error || 'Server error');
+                }
+
+                // Keep local storage fresh for other static pages
+                // Merge addresses into user object so other pages can see them
+                const updatedUser = { ...data.user, addresses: data.addresses };
+                localStorage.setItem('rebin_user', JSON.stringify(updatedUser));
+
+                renderProfile(data);
+            } catch (error) {
+                console.error("Profile Fetch Error:", error);
+                document.getElementById('prof-loading').style.display = 'none';
+                document.getElementById('prof-error').style.display = 'block';
+            }
+        }
+
+        /* ══════════════════════════════════════
+           RENDER
+        ══════════════════════════════════════ */
+        function renderProfile(data) {
+            const { user, addresses, stats, activity, badges, nextLevel } = data;
+
+            /* avatar & nav */
+            const init = user.profile_initial || user.name[0].toUpperCase();
+            document.getElementById('p-avatar').textContent = init;
+            document.getElementById('nav-init').textContent = init;
+
+            /* profile info */
+            document.getElementById('p-name').textContent = user.name;
+            document.getElementById('p-uname').textContent = `@${user.username} · RB#${String(user.id).padStart(5, '0')}`;
+            document.getElementById('p-level').textContent = `⭐ ${user.level}`;
+            document.getElementById('p-phone').textContent = user.phone;
+            document.getElementById('p-email').textContent = user.email;
+            document.getElementById('p-since').textContent = fmtDate(user.member_since);
+
+            /* location */
+            if (addresses && addresses.length > 0) {
+                const def = addresses.find(a => a.is_default) || addresses[0];
+                document.getElementById('p-loc').textContent = `Near ${def.street.split(',')[0]}, ${def.city}`;
+                document.getElementById('nav-loc').textContent = `📍 ${def.city} ▾`;
+            } else {
+                document.getElementById('p-loc').textContent = '–';
+                document.getElementById('nav-loc').textContent = '📍 Set Location ▾';
+            }
+
+            /* show profile */
+            document.getElementById('prof-loading').style.display = 'none';
+            document.getElementById('prof-body').style.display = 'block';
+
+            /* stats */
+            document.getElementById('s-pickups').textContent = stats.pickupCount;
+            document.getElementById('s-waste').textContent = `${stats.totalWaste} kg`;
+            document.getElementById('s-earned').textContent = `₹${fmtINR(stats.totalEarned)}`;
+            document.getElementById('s-rank').textContent = `#${stats.rank}`;
+
+            /* points bar */
+            const pts = user.total_points;
+            let prevPts = 0, nextPts = 500;
+            if (pts >= 10000) { prevPts = 10000; nextPts = 10000; }
+            else if (pts >= 5000) { prevPts = 5000; nextPts = 10000; }
+            else if (pts >= 2000) { prevPts = 2000; nextPts = 5000; }
+            else if (pts >= 500) { prevPts = 500; nextPts = 2000; }
+            const pct = nextPts === prevPts ? 100 : Math.min(100, ((pts - prevPts) / (nextPts - prevPts)) * 100);
+            const need = Math.max(0, nextPts - pts);
+            document.getElementById('pts-cur').textContent = pts.toLocaleString('en-IN');
+            document.getElementById('pts-next').textContent = nextPts.toLocaleString('en-IN');
+            document.getElementById('pts-hint').innerHTML = `${need.toLocaleString('en-IN')} points to reach <strong>${nextLevel.name}</strong> level`;
+            setTimeout(() => { document.getElementById('bar-fill').style.width = `${pct}%`; }, 200);
+
+            /* addresses */
+            const addrEl = document.getElementById('addr-list');
+            if (!addresses || addresses.length === 0) {
+                addrEl.innerHTML = '<p style="font-size:13px;color:#9ca3af;margin-bottom:10px;">No addresses saved yet</p>';
+            } else {
+                addrEl.innerHTML = addresses.map(a =>
+                    `<div class="addr-item">📍 ${a.street}, ${a.city} – ${a.pincode}</div>`
+                ).join('');
+            }
+
+            /* activity */
+            const actEl = document.getElementById('act-list');
+            if (!activity || activity.length === 0) {
+                actEl.innerHTML = '<div style="text-align:center;color:#9ca3af;font-size:13px;padding:16px;">No activity yet. Add a pickup to get started!</div>';
+            } else {
+                actEl.innerHTML = activity.map(a => {
+                    const isEarn = a.type === 'earn';
+                    const isRedeem = a.type === 'redeem';
+                    const dotColor = isEarn ? '#22c55e' : isRedeem ? '#f97316' : '#3b82f6';
+                    const ptsText = isEarn ? `+${a.points} pts` : isRedeem ? `${a.points} pts` : (a.customStatus || 'Pending');
+                    const ptsCls = isEarn ? 'pts-earn' : isRedeem ? 'pts-redeem' : 'pts-pending';
+                    return `
+          <div class="act-item">
+            <div class="act-dot" style="background:${dotColor}"></div>
+            <div class="act-desc">${a.description}</div>
+            <div class="act-time">${fmtAgo(a.created_at)}</div>
+            <div class="act-pts ${ptsCls}">${ptsText}</div>
+          </div>`;
+                }).join('');
+            }
+
+            /* badges */
+            const bgEl = document.getElementById('badges-grid');
+            if (!badges || badges.length === 0) {
+                bgEl.innerHTML = '<div style="grid-column:span 4;text-align:center;color:#9ca3af;font-size:13px;">No badges yet</div>';
+            } else {
+                bgEl.innerHTML = badges.map(b => `
+        <div class="badge-item">
+          <div class="badge-ico ${b.earned ? 'earned' : 'locked'}" title="${b.description}">${b.icon}</div>
+          <div class="badge-nm ${b.earned ? '' : 'locked'}">${b.name}</div>
+        </div>`
+                ).join('');
+            }
+        }
+
+        /* ══════════════════════════════════════
+           ADDRESS FORM
+        ══════════════════════════════════════ */
+        function toggleAddrForm() {
+            const f = document.getElementById('addr-form');
+            f.style.display = f.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        async function saveAddress() {
+            const street = document.getElementById('f-street').value.trim();
+            const city = document.getElementById('f-city').value.trim();
+            const pincode = document.getElementById('f-pincode').value.trim();
+            if (!street || !city || !pincode) return alert('Please fill all address fields');
+
+            try {
+                const r = await fetch(`${API}/address`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'authorization': token },
+                    body: JSON.stringify({ street, city, pincode, is_default: false })
+                });
+                const d = await r.json();
+                if (d.success) {
+                    document.getElementById('f-street').value = '';
+                    document.getElementById('f-city').value = '';
+                    document.getElementById('f-pincode').value = '';
+                    toggleAddrForm();
+                    fetchProfile();
+                } else { alert(d.error || 'Failed to save address'); }
+            } catch { alert('Cannot connect to server'); }
+        }
+
+        /* ══════════════════════════════════════
+           UTILS
+        ══════════════════════════════════════ */
+        function fmtDate(s) {
+            if (!s) return '–';
+            return new Date(s).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+        }
+
+        function fmtINR(n) {
+            return Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+        }
+
+        function fmtAgo(s) {
+            if (!s) return '';
+            const d = new Date(s);
+            const diff = Math.floor((Date.now() - d) / 1000);
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return 'Today';
+            if (diff < 172800) return 'Yesterday';
+            return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+        }
+
+        /* ══════════════════════════════════════
+           SCRAP CALCULATOR
+        ══════════════════════════════════════ */
+        function updateCalcTotal() {
+            const rows = document.querySelectorAll('#calcItemsList .calc-item-row');
+            let total = 0;
+            rows.forEach(row => {
+                const price = parseFloat(row.dataset.price) || 0;
+                const inp = row.querySelector('.calc-item-input');
+                const weight = parseFloat(inp.value) || 0;
+                total += price * weight;
+            });
+            document.getElementById('calcTotal').textContent = '₹' + Math.round(total).toLocaleString('en-IN');
+        }
+
+        function filterCalcItems() {
+            const q = document.getElementById('calcSearch').value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#calcItemsList .calc-item-row');
+            rows.forEach(row => {
+                const tags = (row.dataset.tags || '') + ' ' + row.querySelector('.calc-item-name').textContent.toLowerCase();
+                row.classList.toggle('hidden', q.length > 0 && !tags.toLowerCase().includes(q));
+            });
+        }
+
+        function resetCalc() {
+            document.querySelectorAll('.calc-item-input').forEach(inp => inp.value = '');
+            document.getElementById('calcTotal').textContent = '₹0';
+        }
+    </script>
+</body>
+
+</html>

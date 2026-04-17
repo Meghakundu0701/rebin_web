@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReBin – Points</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="responsive.css" />
+  <style>
+    :root {
+      --green-deep: #0d2818;
+      --green-mid: #2d7a4f;
+      --green-bright: #4caf50;
+      --green-light: #a8e6b8;
+      --teal: #00b894;
+      --accent-red: #e74c3c;
+      --accent-yellow: #f9e4b7;
+      --accent-gold: #e6b84a;
+      --bg-cream: #f4f0e6;
+      --card-bg: #fdf6e3;
+      --text-dark: #1a2e1a;
+      --text-mid: #3d5a3d;
+      --white: #ffffff;
+      --glass: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(76, 175, 80, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--green-deep);
+      min-height: 100vh;
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(10, 28, 16, 0.92);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(12px, 3vw, 32px);
+      height: 60px;
+      border-bottom: 1px solid var(--glass-border);
+      gap: 8px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .nav-location .loc-label {
+      color: var(--green-light);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 700;
+      color: var(--green-bright);
+      cursor: pointer;
+      flex-shrink: 0;
+      text-decoration: none;
+      transition: opacity .2s;
+    }
+
+    .nav-logo:hover {
+      opacity: .8;
+    }
+
+    .nav-logo span {
+      color: var(--white);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.5vw, 22px);
+      flex-shrink: 0;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: clamp(9px, 1.1vw, 11px);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.nav-active {
+      color: var(--green-bright);
+      border-bottom-color: var(--green-bright);
+    }
+
+    .nav-cart-btn {
+      background: var(--accent-red);
+      color: white;
+      font-weight: 800;
+      font-size: clamp(9px, 1.1vw, 11px);
+      border: none;
+      border-radius: 30px;
+      padding: 7px clamp(10px, 1.5vw, 16px);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: transform .15s;
+      text-decoration: none;
+    }
+
+    .nav-cart-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .nav-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--green-mid), var(--teal));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      cursor: pointer;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, .35);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: white;
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    /* ── HERO BANNER (compact) ── */
+    .hero-banner {
+      text-align: center;
+      padding: clamp(24px, 3vw, 38px) 20px clamp(16px, 2vw, 24px);
+      position: relative;
+    }
+
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green-bright), transparent);
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(76, 175, 80, .12);
+      border: 1px solid rgba(76, 175, 80, .25);
+      border-radius: 100px;
+      padding: 5px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--green-light);
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: .95;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, #fff 0%, var(--green-bright) 60%, var(--teal) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .hero-sub {
+      color: rgba(168, 230, 184, .65);
+      font-size: clamp(12px, 1.5vw, 14px);
+      font-weight: 600;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: clamp(16px, 2vw, 28px);
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 clamp(14px, 3vw, 40px) clamp(40px, 5vw, 60px);
+      align-items: start;
+    }
+
+    /* ── LEFT COLUMN ── */
+    .left-col {
+      position: sticky;
+      top: 76px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Points Card */
+    .points-card {
+      background: linear-gradient(145deg, rgba(45, 122, 79, .18) 0%, rgba(0, 184, 148, .1) 100%);
+      border: 1px solid rgba(76, 175, 80, .3);
+      border-radius: 24px;
+      padding: clamp(22px, 2.5vw, 32px);
+      text-align: center;
+      backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .points-card::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(76, 175, 80, .18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .pts-label {
+      color: var(--green-light);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .pts-label::before,
+    .pts-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(76, 175, 80, .25);
+    }
+
+    .pts-number {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(62px, 8vw, 90px);
+      font-weight: 700;
+      color: var(--green-bright);
+      line-height: 1;
+      text-shadow: 0 0 50px rgba(76, 175, 80, .45), 0 0 100px rgba(76, 175, 80, .2);
+      animation: glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 30px rgba(76, 175, 80, .4);
+      }
+
+      to {
+        text-shadow: 0 0 60px rgba(76, 175, 80, .7), 0 0 100px rgba(0, 184, 148, .3);
+      }
+    }
+
+    .pts-sub {
+      color: rgba(255, 255, 255, .38);
+      font-size: 11px;
+      margin-top: 8px;
+      margin-bottom: 18px;
+    }
+
+    /* Progress bar toward next reward */
+    .progress-wrap {
+      margin: 0 0 18px;
+      text-align: left;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(168, 230, 184, .7);
+      margin-bottom: 6px;
+      letter-spacing: .5px;
+    }
+
+    .progress-track {
+      height: 6px;
+      background: rgba(255, 255, 255, .08);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-mid), var(--teal));
+      border-radius: 100px;
+      transition: width .8s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 14px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .stat-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      color: rgba(255, 255, 255, .4);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Action buttons */
+    .pts-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pts-actions a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 14px;
+      padding: 13px 20px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      text-decoration: none;
+      color: white;
+      letter-spacing: .5px;
+    }
+
+    .pts-actions a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, #1f6e3f, var(--teal));
+    }
+
+    .btn-lb {
+      background: linear-gradient(135deg, #5a3000, #c08030);
+    }
+
+
+
+    /* ── RIGHT / REWARDS ── */
+    .rewards-section {
+      min-width: 0;
+    }
+
+    /* Filter tabs */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 100px;
+      padding: 7px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, .55);
+      cursor: pointer;
+      transition: all .2s;
+      font-family: 'Nunito', sans-serif;
+      letter-spacing: .5px;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: rgba(76, 175, 80, .2);
+      border-color: rgba(76, 175, 80, .5);
+      color: var(--green-bright);
+    }
+
+    /* Rewards grid */
+    .rewards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .reward-card {
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      animation: slideIn .45s ease both;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .reward-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
+      border-color: rgba(76, 175, 80, .35);
+    }
+
+    .reward-card.locked {
+      opacity: .55;
+    }
+
+    .reward-card.done {
+      border-color: rgba(76, 175, 80, .5);
+    }
+
+    .reward-img-wrap {
+      position: relative;
+      height: 140px;
+      overflow: hidden;
+    }
+
+    .reward-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .4s;
+    }
+
+    .reward-card:hover .reward-img-wrap img {
+      transform: scale(1.07);
+    }
+
+    .reward-img-placeholder {
+      display: none;
+      font-size: 48px;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      background: rgba(76, 175, 80, .08);
+    }
+
+    .reward-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(135deg, #e6b84a, #f39c12);
+      color: #3d2800;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 100px;
+      letter-spacing: .5px;
+    }
+
+    .reward-lock-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .reward-card.locked:hover .reward-lock-overlay {
+      opacity: 1;
+    }
+
+    .reward-body {
+      padding: 14px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .reward-name {
+      font-size: 13px;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .reward-desc {
+      font-size: 11px;
+      color: rgba(255, 255, 255, .5);
+      line-height: 1.55;
+      margin-bottom: 0;
+      flex: 1;
+    }
+
+    .reward-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, .07);
+    }
+
+    .reward-pts-needed {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent-gold);
+    }
+
+    .pts-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-gold);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .redeem-btn {
+      background: linear-gradient(135deg, var(--green-mid), var(--teal));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s, opacity .15s;
+      white-space: nowrap;
+      letter-spacing: .3px;
+      min-width: 78px;
+      text-align: center;
+    }
+
+    .redeem-btn:hover:not(:disabled) {
+      transform: scale(1.06);
+    }
+
+    .redeem-btn:disabled {
+      opacity: .3;
+      cursor: not-allowed;
+    }
+
+    .redeem-btn.redeemed {
+      background: rgba(76, 175, 80, .15);
+      color: var(--green-bright);
+      border: 1px solid rgba(76, 175, 80, .3);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: linear-gradient(135deg, #0d3020, #1a5035);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 16px 50px rgba(0, 0, 0, .5);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform .45s cubic-bezier(.34, 1.56, .64, 1);
+      border: 1px solid rgba(76, 175, 80, .4);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:960px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .left-col {
+        position: static;
+      }
+    }
+
+    @media(max-width:640px) {
+      .nav-links {
+        position: fixed;
+        top: 60px;
+        right: 0;
+        background: #0a1c10;
+        flex-direction: column;
+        padding: 20px 18px;
+        gap: 16px;
+        width: 200px;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, .3);
+        transform: translateX(100%);
+        transition: transform .3s;
+        align-items: flex-start;
+        border-left: 1px solid rgba(76, 175, 80, .2);
+      }
+
+      .nav-links.open {
+        transform: translateX(0);
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .rewards-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .pts-actions {
+        flex-direction: row;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media(max-width:420px) {
+      .rewards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pts-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-left">
+      <div class="nav-location"><span class="loc-label">📍 HOME ▾</span></div>
+    </div>
+    <a class="nav-logo" href="index.html">Re<span>Bin</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">HOME</a>
+      <a href="points.html" class="nav-active">POINTS</a>
+      <a href="leaderboard.html">LEADERBOARD</a>
+      <a href="about.html">ABOUT</a>
+      <a href="connect.html">CONNECT</a>
+      <a href="index.html" class="nav-cart-btn">🛒 CART</a>
+      <div class="nav-avatar" onclick="window.location.href='rebin_profile.html'">K</div>
+    </div>
+    <div class="hamburger" id="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero-banner">
+    <div class="hero-eyebrow">🌿 Green Rewards Program</div>
+    <div class="hero-title">Points System</div>
+    <div class="hero-sub">Earn green points for every kilogram you recycle — redeem for real rewards</div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="main-layout">
+
+    <!-- LEFT: Points Panel -->
+    <div class="left-col">
+      <div class="points-card">
+        <div class="pts-label">🌿 Your Green Points</div>
+        <div class="pts-number" id="myPtsDisplay">0</div>
+        <div class="pts-sub">Earned from all your recycling activity</div>
+
+        <!-- Progress to next reward -->
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>NEXT REWARD</span>
+            <span id="progressText">— pts away</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Quick stats -->
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-num" id="redeemedCount">0</div>
+            <div class="stat-label">Redeemed</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="availableCount">0</div>
+            <div class="stat-label">Available</div>
+          </div>
+        </div>
+
+        <div class="pts-actions">
+          <a href="index.html" class="btn-add">➕ Add Recyclables</a>
+          <a href="leaderboard.html" class="btn-lb">👑 Leaderboard</a>
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- RIGHT: Rewards -->
+    <div class="rewards-section">
+      <!-- Filter tabs -->
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All Rewards</button>
+        <button class="filter-btn" onclick="setFilter('available',this)">✅ Available</button>
+        <button class="filter-btn" onclick="setFilter('locked',this)">🔒 Locked</button>
+        <button class="filter-btn" onclick="setFilter('redeemed',this)">🎁 Redeemed</button>
+      </div>
+
+      <div class="rewards-grid" id="rewardsGrid"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><span id="toastIcon">✅</span><span id="toastMsg">Done!</span></div>
+
+  <script>
+    const API = '/api';
+    const token = localStorage.getItem('rebin_token');
+    const POINTS_PER_KG = { Paper: 5, Copper: 30, Cardboard: 4, Plastic: 6, Glass: 3, Iron: 8, Aluminium: 12, 'E-Waste': 25 };
+    const REWARDS = [
+      { id: 'r1', name: '10% Off at GreenMart', desc: 'Get 10% discount on your next purchase at GreenMart stores — eco-products and more.', pts: 20, discount: '10% OFF', img: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80' },
+      { id: 'r2', name: 'Free Eco Water Bottle', desc: 'Redeem for a premium stainless steel water bottle from our eco partners.', pts: 30, discount: 'FREE GIFT', img: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&q=80' },
+      { id: 'r3', name: '20% Off Organic Grocery', desc: '20% off your organic grocery order — fresh, local, and sustainable produce.', pts: 50, discount: '20% OFF', img: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?w=400&q=80' },
+      { id: 'r4', name: 'Plant a Tree in Your Name', desc: 'We plant a real tree in your name and send you the certificate.', pts: 40, discount: 'PLANT A TREE', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=80' },
+      { id: 'r5', name: '15% Off ReBin Store', desc: '15% off anything in the ReBin merchandise store — bags, tees, accessories.', pts: 25, discount: '15% OFF', img: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&q=80' },
+      { id: 'r6', name: 'Free Solar Charger', desc: 'A portable solar phone charger — charge your devices with sunlight, anywhere.', pts: 80, discount: 'FREE GIFT', img: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&q=80' },
+    ];
+
+    let currentFilter = 'all';
+    let userPoints = 0;
+    let redeemedRewards = new Set();
+
+    // Load from API
+    async function loadPointsData() {
+      if (!token) return;
+      try {
+        const r = await fetch(`${API}/profile`, { headers: { 'authorization': token } });
+        if (r.ok) {
+          const data = await r.json();
+          userPoints = data.user.total_points || 0;
+          redeemedRewards = new Set(data.user.redeemed_rewards || []);
+        }
+      } catch (e) {
+        // Fallback to localStorage
+        try {
+          const s = JSON.parse(localStorage.getItem('rebinState') || '{}');
+          userPoints = s.userPoints != null ? s.userPoints : 180;
+          redeemedRewards = new Set(s.redeemedRewards || []);
+        } catch (e2) { }
+      }
+      renderPointsPage();
+    }
+
+    function showToast(icon, msg) {
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastMsg').textContent = msg;
+      const t = document.getElementById('toast'); t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    function setFilter(f, btn) {
+      currentFilter = f;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderRewards(userPoints);
+    }
+
+    function renderPointsPage() {
+      const displayed = userPoints;
+      animateCounter('myPtsDisplay', displayed);
+
+      const locked = REWARDS.filter(r => !redeemedRewards.has(r.id) && r.pts > displayed).sort((a, b) => a.pts - b.pts);
+      const prevLvl = REWARDS.filter(r => !redeemedRewards.has(r.id) && r.pts <= displayed).length > 0
+        ? Math.max(...REWARDS.filter(r => !redeemedRewards.has(r.id) && r.pts <= displayed).map(r => r.pts))
+        : 0;
+
+      if (locked.length) {
+        const next = locked[0];
+        const pct = Math.min(100, ((displayed - prevLvl) / (next.pts - prevLvl)) * 100);
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('progressText').textContent = `${next.pts - displayed} pts to "${next.name}"`;
+      } else {
+        document.getElementById('progressFill').style.width = '100%';
+        document.getElementById('progressText').textContent = 'All rewards unlocked! 🎉';
+      }
+
+      const avail = REWARDS.filter(r => !redeemedRewards.has(r.id) && r.pts <= displayed).length;
+      document.getElementById('redeemedCount').textContent = redeemedRewards.size;
+      document.getElementById('availableCount').textContent = avail;
+
+      renderRewards(displayed);
+    }
+
+    function animateCounter(id, target) {
+      const el = document.getElementById(id);
+      const start = parseInt(el.textContent) || 0;
+      const diff = target - start;
+      const duration = 600;
+      const startTime = performance.now();
+      function step(now) {
+        const t = Math.min(1, (now - startTime) / duration);
+        const ease = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(start + diff * ease);
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function renderRewards(currentPts) {
+      let list = REWARDS;
+      if (currentFilter === 'available') list = REWARDS.filter(r => !redeemedRewards.has(r.id) && r.pts <= currentPts);
+      if (currentFilter === 'locked') list = REWARDS.filter(r => !redeemedRewards.has(r.id) && r.pts > currentPts);
+      if (currentFilter === 'redeemed') list = REWARDS.filter(r => redeemedRewards.has(r.id));
+
+      if (list.length === 0) {
+        document.getElementById('rewardsGrid').innerHTML =
+          `<div style="grid-column:1/-1;text-align:center;padding:48px;color:rgba(255,255,255,.35);font-size:14px;font-weight:700;">
+        No rewards in this category yet.
+      </div>`;
+        return;
+      }
+
+      const html = list.map((r, i) => {
+        const canRedeem = currentPts >= r.pts && !redeemedRewards.has(r.id);
+        const isRedeemed = redeemedRewards.has(r.id);
+        const isLocked = !canRedeem && !isRedeemed;
+        return `<div class="reward-card ${isLocked ? 'locked' : ''} ${isRedeemed ? 'done' : ''}" style="animation-delay:${i * 60}ms">
+      <div class="reward-img-wrap">
+        <img src="${r.img}" alt="${r.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+        <div class="reward-img-placeholder">🎁</div>
+        <div class="reward-badge">${r.discount}</div>
+        ${isLocked ? '<div class="reward-lock-overlay">🔒</div>' : ''}
+      </div>
+      <div class="reward-body">
+        <div class="reward-name">${isRedeemed ? '✅ ' : ''} ${r.name}</div>
+        <div class="reward-desc">${r.desc}</div>
+        <div class="reward-footer">
+          <div class="reward-pts-needed"><div class="pts-dot"></div>${r.pts} pts</div>
+          <button class="redeem-btn ${isRedeemed ? 'redeemed' : ''}" ${canRedeem || isRedeemed ? '' : 'disabled'} onclick="redeemReward('${r.id}',${r.pts})">${isRedeemed ? 'Redeemed' : 'Redeem'}</button>
+        </div>
+      </div>
+    </div>`;
+      }).join('');
+      document.getElementById('rewardsGrid').innerHTML = html;
+    }
+
+    async function redeemReward(id, pts) {
+      if (redeemedRewards.has(id)) return;
+      if (userPoints < pts) { showToast('⚠️', 'Not enough points!'); return; }
+
+      if (token) {
+        try {
+          const r = await fetch(`${API}/profile/redeem`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'authorization': token },
+            body: JSON.stringify({ rewardId: id, pointsCost: pts })
+          });
+          const data = await r.json();
+          if (data.success) {
+            userPoints = data.total_points;
+            redeemedRewards = new Set(data.redeemed_rewards);
+            showToast('🎁', `Reward redeemed! −${pts} pts`);
+            renderPointsPage();
+          } else {
+            showToast('⚠️', data.error || 'Failed to redeem');
+          }
+        } catch (e) {
+          showToast('❌', 'Cannot connect to server');
+        }
+      } else {
+        userPoints -= pts;
+        redeemedRewards.add(id);
+        showToast('🎁', `Reward redeemed! −${pts} pts`);
+        renderPointsPage();
+      }
+    }
+
+    loadPointsData();
+  </script>
+
+
+
+
+  <script src="global-header.js"></script>
+
+</body>
+
+</html>

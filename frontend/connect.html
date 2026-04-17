@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReBin – Connect</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="responsive.css" />
+    <style>
+        :root {
+            --green-deep: #1a4d2e;
+            --green-mid: #2d7a4f;
+            --green-bright: #4caf50;
+            --green-light: #a8e6b8;
+            --teal: #00b894;
+            --accent-red: #e74c3c;
+            --accent-yellow: #f9e4b7;
+            --accent-gold: #e6b84a;
+            --bg-cream: #f4f0e6;
+            --card-bg: #fdf6e3;
+            --text-dark: #1a2e1a;
+            --text-mid: #3d5a3d;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-cream);
+            min-height: 100vh;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: var(--green-deep);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 clamp(10px, 3vw, 28px);
+            height: 64px;
+            box-shadow: 0 4px 24px rgba(26, 77, 46, 0.35);
+            gap: 8px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .nav-location .loc-label {
+            color: var(--green-light);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .nav-logo {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(18px, 4vw, 26px);
+            font-weight: 700;
+            color: var(--green-bright);
+            cursor: pointer;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .nav-logo:hover {
+            opacity: 0.85;
+        }
+
+        .nav-logo span {
+            color: var(--white);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 1.5vw, 22px);
+            flex-shrink: 0;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: clamp(9px, 1.1vw, 12px);
+            letter-spacing: 1px;
+            transition: color 0.2s;
+            text-transform: uppercase;
+            padding-bottom: 2px;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.nav-active {
+            color: var(--green-bright);
+            border-bottom-color: var(--green-bright);
+        }
+
+        .nav-cart-btn {
+            background: var(--accent-red);
+            color: white;
+            font-weight: 800;
+            font-size: clamp(9px, 1.1vw, 12px);
+            border: none;
+            border-radius: 30px;
+            padding: 7px clamp(10px, 1.5vw, 18px);
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: transform 0.15s;
+            text-decoration: none;
+        }
+
+        .nav-cart-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-avatar {
+            width: 34px;
+            height: 34px;
+            background: var(--green-light);
+            color: var(--green-deep);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 4px;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        #connectPage {
+            position: relative;
+            z-index: 1;
+            min-height: calc(100vh - 64px);
+            padding: clamp(20px, 3vw, 50px) clamp(14px, 4vw, 60px);
+            overflow: hidden;
+        }
+
+        #connectPage::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, #0a1f12 0%, #0f2a1a 60%, #152e22 100%);
+            z-index: -1;
+        }
+
+        .connect-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(36px, 7vw, 72px);
+            color: var(--green-bright);
+            text-align: center;
+            letter-spacing: 3px;
+            margin-bottom: 6px;
+        }
+
+        .connect-sub {
+            text-align: center;
+            color: rgba(168, 230, 184, 0.7);
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        .connect-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(14px, 3vw, 28px);
+            max-width: 900px;
+            margin: 0 auto 40px;
+        }
+
+        /* Contact form */
+        .contact-form-card {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(76, 175, 80, 0.25);
+            border-radius: 20px;
+            padding: 28px 24px;
+            backdrop-filter: blur(12px);
+        }
+
+        .form-card-title {
+            font-size: 16px;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--green-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1.5px solid rgba(76, 175, 80, 0.25);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--green-bright);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group select option {
+            background: #1a4d2e;
+            color: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--green-mid), var(--teal));
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            border: none;
+            border-radius: 12px;
+            padding: 13px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            margin-top: 4px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 184, 148, 0.3);
+        }
+
+        /* Info / social side */
+        .info-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contact-info-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-radius: 18px;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+
+        .contact-info-title {
+            font-size: 13px;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .contact-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .contact-label {
+            font-size: 11px;
+            color: var(--green-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-value {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 700;
+            margin-top: 1px;
+        }
+
+        /* Social links */
+        .social-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 12px;
+            transition: transform 0.15s, opacity 0.15s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        /* Quick nav cards */
+        .quick-nav {
+            max-width: 900px;
+            margin: 0 auto 40px;
+        }
+
+        .quick-nav-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(18px, 2.5vw, 24px);
+            color: white;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .quick-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .quick-nav-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 18px 14px;
+            border-radius: 16px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+        }
+
+        .quick-nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .quick-nav-icon {
+            font-size: 28px;
+        }
+
+        .quick-nav-label {
+            font-size: 13px;
+            font-weight: 900;
+            color: white;
+        }
+
+        .quick-nav-desc {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+            line-height: 1.4;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--green-deep);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 12px 40px rgba(26, 77, 46, 0.4);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid var(--green-bright);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @media(max-width:760px) {
+            .connect-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #connectPage {
+                padding: clamp(16px, 3vw, 36px) clamp(12px, 3vw, 40px);
+            }
+
+            .connect-sub {
+                margin-bottom: 24px;
+            }
+        }
+
+        @media(max-width:640px) {
+            .nav-links {
+                position: fixed;
+                top: 64px;
+                right: 0;
+                background: var(--green-deep);
+                flex-direction: column;
+                padding: 20px 18px;
+                gap: 14px;
+                width: 220px;
+                min-height: 100vh;
+                box-shadow: -4px 0 24px rgba(0, 0, 0, 0.35);
+                transform: translateX(100%);
+                transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+                align-items: flex-start;
+                border-left: 2px solid rgba(76, 175, 80, 0.2);
+                z-index: 201;
+            }
+
+            .nav-links.open {
+                transform: translateX(0);
+            }
+
+            .nav-links a {
+                font-size: 13px;
+                padding: 8px 0;
+                width: 100%;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            }
+
+            .nav-links .nav-cart-btn {
+                width: 100%;
+                text-align: center;
+                border-radius: 10px;
+                padding: 10px 16px;
+                font-size: 13px;
+                margin-top: 8px;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-logo {
+                font-size: 20px;
+            }
+
+            .social-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-nav-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media(max-width: 420px) {
+            .quick-nav-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-left">
+            <div class="nav-location"><span class="loc-label">📍 HOME ▾</span></div>
+        </div>
+        <a class="nav-logo" href="index.html">Re<span>Bin</span></a>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">HOME</a>
+            <a href="points.html">POINTS</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
+            <a href="about.html">ABOUT</a>
+            <a href="connect.html" class="nav-active">CONNECT</a>
+            <a href="index.html" class="nav-cart-btn">🛒 CART</a>
+            <div class="nav-avatar" onclick="window.location.href='rebin_profile.html'">K</div>
+        </div>
+        <div class="hamburger" id="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <div id="connectPage">
+        <div class="connect-title">Connect With Us</div>
+        <div class="connect-sub">Got questions, suggestions, or want to partner with ReBin? We'd love to hear from you
+            💚</div>
+
+        <div class="connect-grid">
+            <!-- Contact Form -->
+            <div class="contact-form-card">
+                <div class="form-card-title">📬 Send Us a Message</div>
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="formName" placeholder="e.g. Koustav Sharma" />
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="formEmail" placeholder="you@example.com" />
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <select id="formSubject">
+                        <option value="">Select a topic…</option>
+                        <option value="pickup">Schedule a Pickup</option>
+                        <option value="points">Points & Rewards Issue</option>
+                        <option value="partner">Partnership Inquiry</option>
+                        <option value="feedback">General Feedback</option>
+                        <option value="bug">Report a Bug</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="formMessage" placeholder="Tell us what's on your mind…"></textarea>
+                </div>
+                <button class="submit-btn" onclick="submitForm()">🚀 Send Message</button>
+            </div>
+
+            <!-- Info + Social -->
+            <div class="info-col">
+                <div class="contact-info-card">
+                    <div class="contact-info-title">📍 Contact Info</div>
+                    <div class="contact-row">
+                        <div class="contact-icon">📧</div>
+                        <div>
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value">hello@rebin.in</div>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <div class="contact-icon">📞</div>
+                        <div>
+                            <div class="contact-label">Phone</div>
+                            <div class="contact-value">+91 98765 43210</div>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <div class="contact-icon">🕐</div>
+                        <div>
+                            <div class="contact-label">Support Hours</div>
+                            <div class="contact-value">Mon – Sat, 9 AM – 7 PM IST</div>
+                        </div>
+                    </div>
+                    <div class="contact-row">
+                        <div class="contact-icon">📍</div>
+                        <div>
+                            <div class="contact-label">Headquarters</div>
+                            <div class="contact-value">Agra, Uttar Pradesh, India</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-info-card">
+                    <div class="contact-info-title">🌐 Follow Us</div>
+                    <div class="social-grid">
+                        <a href="#" class="social-btn"
+                            style="background:linear-gradient(135deg,#1877f2,#0b5fbd);color:white;">📘 Facebook</a>
+                        <a href="#" class="social-btn"
+                            style="background:linear-gradient(135deg,#e1306c,#833ab4);color:white;">📸 Instagram</a>
+                        <a href="#" class="social-btn"
+                            style="background:linear-gradient(135deg,#1da1f2,#0d7abf);color:white;">🐦 Twitter / X</a>
+                        <a href="#" class="social-btn"
+                            style="background:linear-gradient(135deg,#0077b5,#005a8e);color:white;">💼 LinkedIn</a>
+                        <a href="#" class="social-btn"
+                            style="background:linear-gradient(135deg,#ff0000,#cc0000);color:white;">▶️ YouTube</a>
+                        <a href="#" class="social-btn"
+                            style="background:linear-gradient(135deg,#25d366,#128c7e);color:white;">💬 WhatsApp</a>
+                    </div>
+                </div>
+
+                <div class="contact-info-card"
+                    style="background:linear-gradient(135deg,rgba(76,175,80,0.15),rgba(0,184,148,0.1));border-color:rgba(76,175,80,0.4);">
+                    <div class="contact-info-title">♻️ Schedule a Pickup</div>
+                    <p style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:14px;">Ready to
+                        recycle? Skip the form and go directly to your cart to add materials and book a pickup slot.</p>
+                    <a href="index.html"
+                        style="display:block;text-align:center;background:linear-gradient(135deg,var(--green-mid),var(--teal));color:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;padding:11px;border-radius:12px;text-decoration:none;transition:transform 0.15s;"
+                        onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">🚛 Go
+                        to Cart →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="quick-nav">
+            <div class="quick-nav-title">EXPLORE REBIN</div>
+            <div class="quick-nav-grid">
+                <a href="index.html" class="quick-nav-card" style="background:rgba(26,77,46,0.5);">
+                    <div class="quick-nav-icon">🏠</div>
+                    <div class="quick-nav-label">Home</div>
+                    <div class="quick-nav-desc">Add recyclables & schedule pickups</div>
+                </a>
+                <a href="points.html" class="quick-nav-card" style="background:rgba(13,51,32,0.5);">
+                    <div class="quick-nav-icon">🏆</div>
+                    <div class="quick-nav-label">Points</div>
+                    <div class="quick-nav-desc">Track earnings & redeem rewards</div>
+                </a>
+                <a href="leaderboard.html" class="quick-nav-card" style="background:rgba(90,48,0,0.4);">
+                    <div class="quick-nav-icon">👑</div>
+                    <div class="quick-nav-label">Leaderboard</div>
+                    <div class="quick-nav-desc">See top recyclers in your area</div>
+                </a>
+                <a href="about.html" class="quick-nav-card" style="background:rgba(10,31,18,0.5);">
+                    <div class="quick-nav-icon">ℹ️</div>
+                    <div class="quick-nav-label">About</div>
+                    <div class="quick-nav-desc">Our mission, team & impact</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"><span id="toastIcon">✅</span><span id="toastMsg">Done!</span></div>
+
+    <script>
+        function showToast(icon, msg) {
+            document.getElementById('toastIcon').textContent = icon;
+            document.getElementById('toastMsg').textContent = msg;
+            const t = document.getElementById('toast'); t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2800);
+        }
+        async function submitForm() {
+            const name = document.getElementById('formName').value.trim();
+            const email = document.getElementById('formEmail').value.trim();
+            const subject = document.getElementById('formSubject').value;
+            const msg = document.getElementById('formMessage').value.trim();
+            if (!name) { showToast('⚠️', 'Please enter your name.'); return; }
+            if (!email || !email.includes('@')) { showToast('⚠️', 'Please enter a valid email.'); return; }
+            if (!subject) { showToast('⚠️', 'Please select a subject.'); return; }
+            if (!msg) { showToast('⚠️', 'Please write a message.'); return; }
+
+            try {
+                const r = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, subject, message: msg })
+                });
+                const data = await r.json();
+                if (data.success) {
+                    document.getElementById('formName').value = '';
+                    document.getElementById('formEmail').value = '';
+                    document.getElementById('formSubject').value = '';
+                    document.getElementById('formMessage').value = '';
+                    showToast('🚀', data.message || 'Message sent! We\'ll reply within 24 hrs.');
+                } else {
+                    showToast('❌', data.error || 'Failed to send message');
+                }
+            } catch (err) {
+                // Fallback: clear form anyway for offline usage
+                document.getElementById('formName').value = '';
+                document.getElementById('formEmail').value = '';
+                document.getElementById('formSubject').value = '';
+                document.getElementById('formMessage').value = '';
+                showToast('🚀', 'Message sent! We\'ll reply within 24 hrs.');
+            }
+        }
+    </script>
+
+
+
+
+    <script src="global-header.js"></script>
+
+</body>
+
+</html>

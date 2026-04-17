@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rebin – Collector Home</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="responsive.css" />
+    <style>
+        :root {
+            --green: #00C27A;
+            --green-dark: #009B62;
+            --green-light: #E6FBF3;
+            --amber: #FFB020;
+            --red: #FF4B4B;
+            --ink: #0D1F1A;
+            --ink2: #2B3F38;
+            --muted: #7A9490;
+            --surface: #F4FAF8;
+            --card: #FFFFFF;
+            --border: #D6EEE8;
+            --radius: 18px;
+            --shadow: 0 4px 24px rgba(0, 194, 122, 0.08);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--surface);
+            color: var(--ink);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* TOP NAV */
+        header {
+            background: var(--card);
+            border-bottom: 1.5px solid var(--border);
+            padding: 0 20px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            color: var(--green);
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--ink);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-sm {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--green-light);
+            border: 2px solid var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            color: var(--green);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .notif-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notif-dot {
+            position: absolute;
+            top: 7px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--amber);
+            border: 1.5px solid white;
+        }
+
+        main {
+            padding: 0 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* SECTION TITLES */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 24px 0 14px;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title .badge {
+            background: var(--green);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .section-title .badge.amber {
+            background: var(--amber);
+            color: var(--ink);
+        }
+
+        .see-all {
+            font-size: 13px;
+            color: var(--green);
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* REQUEST CARD */
+        .request-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1.5px solid var(--border);
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.4s ease both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .request-card:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+
+        .request-card:nth-child(3) {
+            animation-delay: 0.16s;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .user-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .ua-blue {
+            background: #E8F0FF;
+            color: #3B7FFF;
+        }
+
+        .ua-pink {
+            background: #FFE8F5;
+            color: #E040A0;
+        }
+
+        .ua-teal {
+            background: #E0FAF4;
+            color: #009B62;
+        }
+
+        .user-info .name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--ink);
+        }
+
+        .user-info .phone {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .kg-pill {
+            background: var(--green-light);
+            color: var(--green-dark);
+            font-weight: 700;
+            font-size: 13px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-family: 'Syne', sans-serif;
+            white-space: nowrap;
+        }
+
+        .card-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .meta-item {
+            background: var(--surface);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .meta-icon {
+            font-size: 16px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink2);
+            margin-top: 2px;
+        }
+
+        .location-bar {
+            background: var(--surface);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: var(--ink2);
+        }
+
+        .location-bar span:first-child {
+            font-size: 16px;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 11px;
+            border-radius: 12px;
+            border: none;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-accept {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background: var(--green-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-decline {
+            background: #FFF0F0;
+            color: var(--red);
+            border: 1.5px solid #FFD0D0;
+        }
+
+        .btn-decline:hover {
+            background: #FFE0E0;
+        }
+
+        /* DIVIDER */
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, var(--green) 0%, transparent 60%);
+            border-radius: 4px;
+            margin: 28px 0 0;
+            opacity: 0.18;
+        }
+
+        /* SCHEDULED CARD */
+        .scheduled-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1.5px solid var(--border);
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 14px;
+            animation: slideUp 0.4s ease both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scheduled-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--green);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .sched-num {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--green-light);
+            color: var(--green);
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+
+        .sched-body {
+            flex: 1;
+        }
+
+        .sched-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sched-phone {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .sched-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 12px;
+            color: var(--ink2);
+            font-weight: 500;
+        }
+
+        .tag .ti {
+            font-size: 13px;
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--card);
+            border-top: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            transition: color 0.15s;
+        }
+
+        .nav-item.active {
+            color: var(--green);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+        }
+
+        .nav-item.active .nav-icon {
+            filter: drop-shadow(0 0 6px rgba(0, 194, 122, 0.5));
+        }
+
+        /* EMPTY STATE */
+        .empty {
+            text-align: center;
+            padding: 32px 20px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .empty .big {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">Re<span>Bin</span></div>
+        <div class="header-right">
+            <div class="notif-btn">
+                <span>🔔</span>
+                <div class="notif-dot"></div>
+            </div>
+            <div class="avatar-sm" id="header-avatar">?</div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- PART 1: NEW REQUESTS -->
+        <div class="section-header">
+            <div class="section-title">
+                New Requests
+                <span class="badge" id="badge-new">0</span>
+            </div>
+            <a class="see-all">See all</a>
+        </div>
+
+        <div id="new-requests-list">
+            <div id="empty-new-requests"
+                style="text-align:center; padding: 20px; color: var(--muted); font-size: 13px;">
+                No new pickup requests in your area.
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- PART 2: SCHEDULED ORDERS -->
+        <div class="section-header">
+            <div class="section-title">
+                Scheduled Pickups
+                <span class="badge amber" id="badge-scheduled">0</span>
+            </div>
+            <a class="see-all">View map</a>
+        </div>
+
+        <div id="scheduled-list">
+            <div id="empty-scheduled-pickups"
+                style="text-align:center; padding: 20px; color: var(--muted); font-size: 13px;">
+                You don't have any pending scheduled pickups.
+            </div>
+        </div>
+
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a class="nav-item active" href="collector-home.html">
+            <span class="nav-icon">🏠</span>Home
+        </a>
+        <a class="nav-item" href="collector-profile.html">
+            <span class="nav-icon">👤</span>Profile
+        </a>
+        <a class="nav-item" href="collector-history.html">
+            <span class="nav-icon">📦</span>History
+        </a>
+    </nav>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const API = '/api';
+        const token = localStorage.getItem('rebin_token');
+        let trackingSocket = null;
+
+        // Load collector data from API
+        async function loadCollectorHome() {
+            if (!token) {
+                window.location.href = 'rebin_profile.html';
+                return;
+            }
+
+
+            try {
+                const r = await fetch(`${API}/pickups/collector`, {
+                    headers: { 'authorization': token }
+                });
+                const data = await r.json();
+
+                renderNewRequests(data.newRequests || []);
+                renderScheduledPickups(data.assigned || []);
+
+                // Update Header Avatar
+                const avatar = document.getElementById('header-avatar');
+                if (avatar && data.assigned && data.assigned.length > 0) {
+                    // We don't have the collector's name directly in this API response, 
+                    // but we can at least set a generic 'C' or fetch it elsewhere.
+                    // For now, let's keep it as is or set it to 'C'
+                    avatar.textContent = 'M'; // Mani
+                }
+
+                // Setup live location sending
+                setupLocationSending(data.assigned || []);
+            } catch (err) {
+                console.error('Failed to load collector data:', err);
+            }
+        }
+
+        function renderNewRequests(requests) {
+            const list = document.getElementById('new-requests-list');
+            const emptyState = document.getElementById('empty-new-requests');
+            const badge = document.getElementById('badge-new');
+
+            // Clear existing cards
+            list.querySelectorAll('.request-card').forEach(c => c.remove());
+            badge.innerText = requests.length;
+
+            if (requests.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            const avatarColors = ['ua-blue', 'ua-pink', 'ua-teal'];
+            requests.forEach((req, i) => {
+                const initials = req.user ? req.user.name.split(' ').map(w => w[0]).join('').toUpperCase() : '??';
+                const colorClass = avatarColors[i % avatarColors.length];
+                const address = req.pickup_location ? req.pickup_location.address : (req.user && req.user.address ? `${req.user.address.street}, ${req.user.address.city}` : 'Address not available');
+
+                const card = document.createElement('div');
+                card.className = 'request-card';
+                card.innerHTML = `
+                    <div class="card-top">
+                        <div class="user-row">
+                            <div class="user-avatar ${colorClass}">${initials}</div>
+                            <div class="user-info">
+                                <div class="name">${req.user ? req.user.name : 'Unknown'}</div>
+                                <div class="phone">📞 ${req.user ? req.user.phone : 'N/A'}</div>
+                            </div>
+                        </div>
+                        <div class="kg-pill">~${req.total_kg} kg</div>
+                    </div>
+                    <div class="location-bar">
+                        <span>📍</span>
+                        <span>${address}</span>
+                    </div>
+                    <div class="action-row">
+                        <button class="btn btn-accept" onclick="acceptRequest(this, '${req.id}')">✔ Accept</button>
+                        <button class="btn btn-decline" onclick="declineRequest(this, '${req.id}')">✕ Decline</button>
+                    </div>`;
+                list.appendChild(card);
+            });
+        }
+
+        function renderScheduledPickups(pickups) {
+            const list = document.getElementById('scheduled-list');
+            const emptyState = document.getElementById('empty-scheduled-pickups');
+            const badge = document.getElementById('badge-scheduled');
+
+            // Remove existing scheduled cards
+            list.querySelectorAll('.scheduled-card').forEach(c => c.remove());
+
+            const scheduledPickups = pickups.filter(p => p.status === 'assigned' || p.status === 'in_transit');
+            badge.innerText = scheduledPickups.length;
+
+            if (scheduledPickups.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            scheduledPickups.forEach((p, i) => {
+                const name = p.user ? p.user.name : 'Unknown';
+                const phone = p.user ? p.user.phone : '';
+                const addr = p.pickup_location ? p.pickup_location.address : '';
+                const date = p.pickup_date || '';
+                const time = p.pickup_time || '';
+                const kg = p.total_kg || 0;
+
+                const card = document.createElement('div');
+                card.className = 'scheduled-card';
+                card.style.animationDelay = `${i * 0.1}s`;
+                card.innerHTML = `
+                    <div class="sched-num">${i + 1}</div>
+                    <div class="sched-body">
+                        <div class="sched-name">
+                            ${name}
+                            <span style="font-size:12px;color:var(--muted);font-family:'DM Sans'">${phone}</span>
+                        </div>
+                        <div class="sched-phone">📍 ${addr}</div>
+                        <div class="sched-tags">
+                            <div class="tag"><span class="ti">📅</span> ${date}</div>
+                            <div class="tag"><span class="ti">⏰</span> ${time}</div>
+                            <div class="tag"><span class="ti">⚖️</span> ~${kg} kg</div>
+                        </div>
+                    </div>`;
+                list.appendChild(card);
+            });
+        }
+
+        async function acceptRequest(btn, pickupId) {
+            const card = btn.closest('.request-card');
+            card.style.transition = 'all 0.3s ease';
+            card.style.borderColor = '#00C27A';
+            card.style.background = '#E6FBF3';
+            btn.textContent = '✔ Accepting...';
+            btn.style.background = '#009B62';
+            btn.disabled = true;
+
+            try {
+                const r = await fetch(`${API}/pickup/${pickupId}/accept`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'authorization': token }
+                });
+                const data = await r.json();
+
+                if (data.success) {
+                    btn.textContent = '✔ Accepted!';
+                    btn.nextElementSibling.style.display = 'none';
+
+                    setTimeout(() => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(-8px)';
+                        setTimeout(() => {
+                            card.remove();
+                            loadCollectorHome(); // Reload to refresh lists
+                        }, 300);
+                    }, 1200);
+                } else {
+                    btn.textContent = '✔ Accept';
+                    btn.style.background = 'var(--green)';
+                    btn.disabled = false;
+                    alert(data.error || 'Failed to accept');
+                }
+            } catch (err) {
+                btn.textContent = '✔ Accept';
+                btn.disabled = false;
+                alert('Cannot connect to server');
+            }
+        }
+
+        async function declineRequest(btn, pickupId) {
+            const card = btn.closest('.request-card');
+            try {
+                await fetch(`${API}/pickup/${pickupId}/decline`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'authorization': token }
+                });
+            } catch (e) { }
+
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(20px)';
+            setTimeout(() => {
+                card.remove();
+                const newBadge = document.querySelectorAll('.section-title .badge:not(.amber)')[0];
+                if (newBadge) newBadge.innerText = Math.max(0, parseInt(newBadge.innerText) - 1);
+            }, 300);
+        }
+
+        // Send collector location every 5 seconds
+        function setupLocationSending(assignments) {
+            try {
+                trackingSocket = io('/tracking');
+                // Join all active pickup rooms
+                assignments.forEach(a => {
+                    if (a.status === 'assigned' || a.status === 'in_transit') {
+                        trackingSocket.emit('join-pickup-room', a.id);
+                    }
+                });
+
+                function sendLocation() {
+                    navigator.geolocation.getCurrentPosition((pos) => {
+                        // Update server
+                        fetch(`${API}/location`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'authorization': token },
+                            body: JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+                        }).catch(() => { });
+
+                        // Broadcast to all active pickup rooms
+                        assignments.forEach(a => {
+                            if (a.status === 'assigned' || a.status === 'in_transit') {
+                                trackingSocket.emit('collector:location-update', {
+                                    pickupId: a.id,
+                                    lat: pos.coords.latitude,
+                                    lng: pos.coords.longitude,
+                                    collectorName: 'Collector'
+                                });
+                            }
+                        });
+                    }, () => { });
+                }
+
+                sendLocation();
+                setInterval(sendLocation, 5000);
+            } catch (e) {
+                console.log('Socket.IO not available');
+            }
+        }
+
+        // Load on page load
+        loadCollectorHome();
+
+        // Auto-refresh every 5 seconds so new requests appear quickly
+        setInterval(loadCollectorHome, 5000);
+    </script>
+    <script src="global-header.js"></script>
+</body>
+
+</html>

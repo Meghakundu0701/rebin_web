@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReBin – About</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="responsive.css" />
+  <style>
+    /* ── ROOT VARIABLES (Synced with Index) ── */
+    :root {
+      --green-deep: #1a4d2e;
+      --green-mid: #2d7a4f;
+      --green-bright: #4caf50;
+      --green-light: #a8e6b8;
+      --teal: #00b894;
+      --lime: #8BC34A;
+      --accent-red: #e74c3c;
+      --accent-yellow: #f9e4b7;
+      --accent-gold: #e6b84a;
+      --bg-cream: #f4f0e6;
+      --card-bg: #fdf6e3;
+      --text-dark: #1a2e1a;
+      --text-mid: #3d5a3d;
+      --white: #ffffff;
+      --shadow: 0 8px 32px rgba(26, 77, 46, 0.13);
+      /* About Page Specific Dark Accents */
+      --dark-bg: #0d2318;
+      --dark-card: #122b1e;
+      --text-light: #d1fae5;
+      --text-muted: #a7d8b8;
+      --g3: #16a34a;
+      --g4: #4ade80;
+      --text2: #a7d8b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-light);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NAVBAR (Matched to Index) ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--green-deep);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(10px, 3vw, 28px);
+      height: 64px;
+      box-shadow: 0 4px 24px rgba(26, 77, 46, 0.35);
+      gap: 8px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .loc-label {
+      color: var(--green-light);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(18px, 4vw, 26px);
+      font-weight: 700;
+      color: var(--green-bright);
+      text-decoration: none;
+    }
+
+    .nav-logo span {
+      color: var(--white);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.5vw, 22px);
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: clamp(9px, 1.1vw, 12px);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+      transition: 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.nav-active {
+      color: var(--green-bright);
+      border-bottom-color: var(--green-bright);
+    }
+
+    .nav-cart-btn {
+      background: var(--accent-red);
+      color: white;
+      font-weight: 800;
+      font-size: clamp(9px, 1.1vw, 12px);
+      border-radius: 30px;
+      padding: 7px clamp(10px, 1.5vw, 18px);
+      text-decoration: none;
+    }
+
+    .nav-avatar {
+      width: 34px;
+      height: 34px;
+      background: var(--green-light);
+      color: var(--green-deep);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* Hamburger button */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: white;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* Mobile main padding */
+    @media(max-width: 900px) {
+      .main {
+        padding: 28px 20px 50px !important;
+      }
+
+      .brand-title {
+        font-size: clamp(32px, 8vw, 46px);
+      }
+    }
+
+    @media(max-width: 640px) {
+      nav .hamburger {
+        display: flex !important;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 64px;
+        right: 0;
+        background: var(--green-deep);
+        flex-direction: column;
+        padding: 20px 18px;
+        gap: 16px;
+        width: 220px;
+        min-height: 100vh;
+        box-shadow: -4px 0 24px rgba(0, 0, 0, 0.35);
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+        align-items: flex-start;
+        border-left: 2px solid rgba(76, 175, 80, 0.2);
+        z-index: 200;
+      }
+
+      .nav-links.open {
+        transform: translateX(0);
+      }
+
+      .nav-links a {
+        font-size: 13px !important;
+        padding: 8px 0 !important;
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      }
+
+      .nav-links .nav-cart-btn {
+        border-radius: 10px !important;
+        width: 100%;
+        text-align: center;
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+        margin-top: 8px;
+      }
+
+      .main {
+        padding: 24px 14px 50px !important;
+      }
+
+      .brand-title {
+        font-size: clamp(28px, 9vw, 40px);
+      }
+
+      .section-title {
+        font-size: 22px;
+      }
+
+      .hero-desc {
+        font-size: 14px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .illus-band {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+        padding: 24px 16px;
+      }
+
+      .illus-band .collectors-anim-wrap {
+        margin: 0 auto;
+      }
+    }
+
+    @media(max-width: 480px) {
+      .flow {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 16px !important;
+      }
+
+      .flow::before {
+        display: none !important;
+      }
+
+      .stats {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* ── CONTENT LAYOUT ── */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 44px 36px 70px;
+    }
+
+    .hero {
+      margin-bottom: 52px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      background: rgba(74, 222, 128, 0.12);
+      color: var(--green-light);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      margin-bottom: 14px;
+    }
+
+    .brand-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 52px;
+      font-weight: 800;
+      color: var(--text-light);
+      margin-bottom: 18px;
+    }
+
+    .brand-title span {
+      color: var(--green-bright);
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--text-muted);
+      max-width: 640px;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      color: #d1fae5;
+      letter-spacing: -0.5px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title span {
+      color: var(--g4);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0;
+      position: relative;
+      margin-bottom: 52px;
+      padding-top: 20px;
+    }
+
+    /* THE BACK LINE - MATCHING IMAGE */
+    .flow::before {
+      content: '';
+      position: absolute;
+      top: 52px;
+      /* Centers line behind the icons */
+      left: 8%;
+      right: 8%;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(74, 222, 128, 0.1), #4ade80, rgba(74, 222, 128, 0.1));
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+      z-index: 0;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-icon-wrap {
+      width: 65px;
+      height: 65px;
+      border-radius: 18px;
+      background: #0d2318;
+      /* Dark green box bg */
+      border: 1.5px solid rgba(74, 222, 128, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      transition: all .25s;
+      position: relative;
+    }
+
+    .step:hover .step-icon-wrap {
+      transform: translateY(-6px);
+      border-color: var(--g4);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .step-num {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--g4);
+      color: #061a0f;
+      font-size: 10px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      border: 2px solid #061a0f;
+    }
+
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 6px;
+      color: #d1fae5;
+    }
+
+    .step-desc {
+      font-size: 11px;
+      color: var(--text2);
+      text-align: center;
+      line-height: 1.5;
+      font-weight: 500;
+      max-width: 130px;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .stat-card {
+      background: var(--dark-card);
+      border: 1px solid rgba(74, 222, 128, 0.15);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--green-bright);
+    }
+
+    /* ── ILLUSTRATION BAND STYLES ── */
+    .illus-band {
+      background: var(--dark-card);
+      border: 1px solid rgba(74, 222, 128, 0.15);
+      border-radius: 20px;
+      padding: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .collector-anim-wrap {
+      width: 160px;
+      height: 160px;
+      flex-shrink: 0;
+    }
+
+    .collector-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .illus-center {
+      text-align: center;
+      flex: 1;
+      padding: 0 24px;
+    }
+
+    .tagline {
+      font-family: 'Syne', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .illus-center p {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 360px;
+      margin: 0 auto 18px;
+      line-height: 1.65;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--green-mid), var(--green-deep));
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      font-size: 13px;
+      font-family: 'Syne', sans-serif;
+      transition: all .2s;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(22, 163, 74, 0.4);
+    }
+
+    /* SVG Animations */
+    @keyframes armUp {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      30%,
+      60% {
+        transform: rotate(-35deg);
+      }
+    }
+
+    @keyframes garbageLift {
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      30%,
+      60% {
+        transform: translateY(-8px) translateX(10px);
+        opacity: 0.7;
+      }
+    }
+
+    @keyframes binShake {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(-3deg);
+      }
+
+      75% {
+        transform: rotate(3deg);
+      }
+    }
+
+    @keyframes bodyBob {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-3px);
+      }
+    }
+
+    .anim-body {
+      animation: bodyBob 1.8s ease-in-out infinite;
+    }
+
+    .anim-arm {
+      animation: armUp 2.4s ease-in-out infinite;
+      transform-origin: 45px 55px;
+    }
+
+    .anim-garbage {
+      animation: garbageLift 2.4s ease-in-out infinite;
+    }
+
+    .anim-bin {
+      animation: binShake 2.4s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+
+    /* ── CAR STRIP ── */
+    .car-strip {
+      width: 100%;
+      background: var(--dark-card);
+      border: 1px solid rgba(74, 222, 128, 0.15);
+      border-radius: 20px;
+      height: 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .car-strip::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, rgba(74, 222, 128, 0.1) 0px, rgba(74, 222, 128, 0.1) 30px, transparent 30px, transparent 60px);
+    }
+
+    .moving-car {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      animation: carDrive 5s linear infinite;
+    }
+
+    @keyframes carDrive {
+      0% {
+        left: -120px;
+      }
+
+      100% {
+        left: calc(100% + 20px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="nav-left">
+      <div class="nav-location"><span class="loc-label">📍 HOME ▾</span></div>
+    </div>
+    <a class="nav-logo" href="index.html">Re<span>Bin</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">HOME</a>
+      <a href="points.html">POINTS</a>
+      <a href="leaderboard.html">LEADERBOARD</a>
+      <a href="about.html" class="nav-active">ABOUT</a>
+      <a href="connect.html">CONNECT</a>
+      <a href="index.html#cart" class="nav-cart-btn">🛒 CART</a>
+      <div class="nav-avatar" onclick="window.location.href='rebin_profile.html'">K</div>
+    </div>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="hero">
+      <div class="brand-badge">♻ SMART RECYCLING PLATFORM</div>
+      <h1 class="brand-title">Re<span>Bin</span><span style="color:var(--accent-red)">:</span></h1>
+      <p class="hero-desc">
+        ReBin is a smart recycling platform that simplifies waste management by connecting
+        <strong>users, collectors, and recyclers</strong> for clean, efficient processing.
+        We ensure fair payouts, seamless pickups, and a sustainable ecosystem.
+      </p>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="section-title">HOW IT WORKS <span>?</span></div>
+
+    <div class="flow">
+      <div class="step">
+        <div class="step-icon-wrap">
+          <div class="step-num">1</div>👤
+        </div>
+        <div class="step-title">User Registers</div>
+        <div class="step-desc">Download, register & schedule a pickup from home</div>
+      </div>
+      <div class="step">
+        <div class="step-icon-wrap">
+          <div class="step-num">2</div>👷
+        </div>
+        <div class="step-title">Collector Picks Up</div>
+        <div class="step-desc">Trained collector visits, segregates & weighs waste</div>
+      </div>
+      <div class="step">
+        <div class="step-icon-wrap">
+          <div class="step-num">3</div>✅
+        </div>
+        <div class="step-title">App Verifies</div>
+        <div class="step-desc">System verifies weight; rewards or cash credited instantly</div>
+      </div>
+      <div class="step">
+        <div class="step-icon-wrap">
+          <div class="step-num">4</div>🏭
+        </div>
+        <div class="step-title">Waste Delivered</div>
+        <div class="step-desc">Transported to authorised recycling centres for eco processing</div>
+      </div>
+      <div class="step">
+        <div class="step-icon-wrap">
+          <div class="step-num">5</div>💰
+        </div>
+        <div class="step-title">Recyclers Pay</div>
+        <div class="step-desc">Partners purchase sorted waste; platform deducts small fee</div>
+      </div>
+      <div class="step">
+        <div class="step-icon-wrap">
+          <div class="step-num">6</div>♻️
+        </div>
+        <div class="step-title">Cycle Repeats</div>
+        <div class="step-desc">Users earn rewards & develop sustainable habits</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-num">12K+</div>
+        <p>Active Users</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">840+</div>
+        <p>Collectors</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">3.2T</div>
+        <p>Waste Recycled</p>
+      </div>
+    </div>
+
+    <div class="illus-band">
+      <div class="collector-anim-wrap">
+        <svg class="collector-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g class="anim-bin">
+            <rect x="88" y="95" width="44" height="50" rx="5" fill="#15803d" />
+            <rect x="86" y="88" width="48" height="10" rx="4" fill="#166534" />
+            <text x="110" y="122" text-anchor="middle" font-size="18" fill="white">♻</text>
+            <rect x="84" y="83" width="52" height="8" rx="4" fill="#1a6b3a" />
+          </g>
+          <g class="anim-garbage">
+            <ellipse cx="70" cy="84" rx="10" ry="8" fill="#ef4444" opacity="0.85" />
+            <ellipse cx="74" cy="80" rx="8" ry="6" fill="#f97316" opacity="0.8" />
+            <ellipse cx="66" cy="81" rx="7" ry="5" fill="#3b82f6" opacity="0.8" />
+            <circle cx="70" cy="76" r="2" fill="#dc2626" />
+          </g>
+          <g class="anim-body">
+            <circle cx="46" cy="38" r="16" fill="#fbbf24" />
+            <rect x="30" y="24" width="32" height="10" rx="5" fill="#166534" />
+            <circle cx="40" cy="38" r="2.5" fill="#1a1a1a" />
+            <circle cx="52" cy="38" r="2.5" fill="#1a1a1a" />
+            <path d="M40 44 Q46 49 52 44" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round" fill="none" />
+            <rect x="30" y="55" width="32" height="36" rx="6" fill="#16a34a" />
+            <rect x="40" y="55" width="12" height="36" fill="#15803d" opacity="0.4" />
+            <rect x="14" y="55" width="16" height="10" rx="5" fill="#16a34a" />
+            <rect x="8" y="60" width="10" height="8" rx="4" fill="#fbbf24" />
+            <g class="anim-arm">
+              <rect x="62" y="55" width="28" height="10" rx="5" fill="#16a34a" />
+              <rect x="84" y="58" width="10" height="8" rx="4" fill="#fbbf24" />
+            </g>
+            <rect x="32" y="91" width="12" height="30" rx="5" fill="#166534" />
+            <rect x="46" y="91" width="12" height="30" rx="5" fill="#166534" />
+            <rect x="28" y="118" width="18" height="8" rx="4" fill="#1a1a1a" />
+            <rect x="42" y="118" width="18" height="8" rx="4" fill="#1a1a1a" />
+          </g>
+          <line x1="82" y1="70" x2="94" y2="60" stroke="rgba(74,222,128,0.4)" stroke-width="1.5" stroke-dasharray="3 3">
+            <animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite" />
+          </line>
+        </svg>
+      </div>
+      <div class="illus-center">
+        <div class="tagline">Every bin is a beginning 🌱</div>
+        <p>Join thousands of households turning their daily waste into rewards, while building a cleaner, greener future
+          for everyone.</p>
+        <a href="index.html" class="cta-btn">Place a Request →</a>
+      </div>
+      <div class="illus-right-placeholder">
+        <svg viewBox="0 0 120 160" fill="none" width="120" height="160">
+          <g>
+            <rect x="54" y="120" width="12" height="30" rx="4" fill="#166534" />
+            <ellipse cx="60" cy="95" rx="28" ry="22" fill="#16a34a" />
+            <ellipse cx="60" cy="80" rx="20" ry="16" fill="#22c55e" />
+            <ellipse cx="60" cy="68" rx="12" ry="10" fill="#4ade80" />
+            <text x="18" y="55" font-size="14" opacity="0.7">✨</text>
+            <rect x="42" y="148" width="36" height="8" rx="4" fill="#92400e" />
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="car-strip">
+      <div class="moving-car">
+        <svg viewBox="0 0 90 50" fill="none" width="90" height="50">
+          <rect x="4" y="22" width="78" height="22" rx="6" fill="#16a34a" />
+          <path d="M18 22 Q24 8 42 7 Q60 6 66 22Z" fill="#15803d" />
+          <rect x="26" y="10" width="14" height="10" rx="3" fill="#86efac" opacity="0.7" />
+          <rect x="44" y="10" width="14" height="10" rx="3" fill="#86efac" opacity="0.7" />
+          <circle cx="22" cy="44" r="8" fill="#1a1a1a" />
+          <circle cx="68" cy="44" r="8" fill="#1a1a1a" />
+          <circle cx="22" cy="44" r="2" fill="#9ca3af">
+            <animateTransform attributeName="transform" type="rotate" from="0 22 44" to="360 22 44" dur="0.5s"
+              repeatCount="indefinite" />
+          </circle>
+          <circle cx="68" cy="44" r="2" fill="#9ca3af">
+            <animateTransform attributeName="transform" type="rotate" from="0 68 44" to="360 68 44" dur="0.5s"
+              repeatCount="indefinite" />
+          </circle>
+          <text x="32" y="37" font-size="12" fill="white" font-weight="bold">♻</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <script src="global-header.js"></script>
+  <script>
+    // Hamburger menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('open');
+        hamburger.classList.toggle('open');
+      });
+      // Close on overlay click
+      document.addEventListener('click', (e) => {
+        if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+          navLinks.classList.remove('open');
+          hamburger.classList.remove('open');
+        }
+      });
+    }
+  </script>
+
+</body>
+
+</html>

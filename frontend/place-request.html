@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReBin – Place Request</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="responsive.css" />
+    <style>
+        :root {
+            --g1: #0a2e1a;
+            --g2: #14532d;
+            --g3: #16a34a;
+            --g4: #4ade80;
+            --g5: #bbf7d0;
+            --g6: #f0fdf4;
+            --dark-bg: #0d2318;
+            --dark-card: #122b1e;
+            --dark-card2: #163323;
+            --dark-border: rgba(74, 222, 128, 0.15);
+            --orange: #f97316;
+            --orange2: #fb923c;
+            --text: #e2f5ea;
+            --text2: #a7d8b8;
+            --text3: #6aad85;
+            --border: rgba(74, 222, 128, 0.18);
+            --white: #ffffff;
+            --radius: 12px;
+            --radius2: 20px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+            --shadow2: 0 8px 40px rgba(0, 0, 0, 0.45);
+            /* Index Specifics */
+            --green-deep: #1a4d2e;
+            --green-mid: #2d7a4f;
+            --green-bright: #4caf50;
+            --green-light: #a8e6b8;
+            --accent-red: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+            background: var(--dark-bg);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 700px 500px at 10% 30%, rgba(22, 163, 74, 0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 600px 400px at 85% 70%, rgba(74, 222, 128, 0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 400px 300px at 60% 10%, rgba(20, 83, 45, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* ── INDEX NAVBAR STYLES (MATCHED) ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: var(--green-deep);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 clamp(10px, 3vw, 28px);
+            height: 64px;
+            box-shadow: 0 4px 24px rgba(26, 77, 46, 0.35);
+            gap: 8px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .nav-location .loc-label {
+            color: var(--green-light);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .nav-logo {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(18px, 4vw, 26px);
+            font-weight: 700;
+            color: var(--green-bright);
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .nav-logo span {
+            color: var(--white);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 1.5vw, 22px);
+            flex-shrink: 0;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: clamp(9px, 1.1vw, 12px);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding-bottom: 2px;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.nav-active {
+            color: var(--green-bright);
+            border-bottom-color: var(--green-bright);
+        }
+
+        .nav-cart-btn {
+            background: var(--accent-red);
+            color: white;
+            font-weight: 800;
+            font-size: clamp(9px, 1.1vw, 12px);
+            border-radius: 30px;
+            padding: 7px clamp(10px, 1.5vw, 18px);
+            text-decoration: none;
+            transition: transform 0.15s;
+        }
+
+        .nav-cart-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-avatar {
+            width: 34px;
+            height: 34px;
+            background: var(--green-light);
+            color: var(--green-deep);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+        }
+
+        /* ── LAYOUT ── */
+        .layout {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 28px 36px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ── PAGE TITLE ── */
+        .page-title {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: -8px;
+        }
+
+        .page-title h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: #86efac;
+            letter-spacing: -0.5px;
+        }
+
+        .page-title .pill {
+            background: var(--g3);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--dark-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius2);
+            border: 1px solid var(--dark-border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 22px 14px;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.12);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(22, 163, 74, 0.06);
+        }
+
+        .card-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #d1fae5;
+        }
+
+        .hicon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .hicon-g {
+            background: rgba(74, 222, 128, 0.15);
+        }
+
+        .hicon-b {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .hicon-o {
+            background: rgba(249, 115, 22, 0.15);
+        }
+
+        .card-body {
+            padding: 20px 22px;
+        }
+
+        /* ── SECTION LABEL ── */
+        .sec-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .sec-label .slabel {
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #d1fae5;
+        }
+
+        /* ── OTP ── */
+        .field-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+        }
+
+        .otp-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .otp-box {
+            width: 46px;
+            height: 48px;
+            border: 1.5px solid rgba(74, 222, 128, 0.2);
+            border-radius: var(--radius);
+            background: rgba(10, 30, 18, 0.7);
+            text-align: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--g4);
+            outline: none;
+            transition: all .2s;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .otp-box:focus {
+            border-color: var(--g3);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.12);
+        }
+
+        .otp-box.filled {
+            border-color: var(--g4);
+            background: rgba(74, 222, 128, 0.08);
+        }
+
+        .btn-verify {
+            width: 100%;
+            padding: 11px;
+            background: rgba(59, 130, 246, 0.12);
+            color: #93c5fd;
+            border: 1.5px solid rgba(59, 130, 246, 0.25);
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+            letter-spacing: 0.5px;
+            transition: all .2s;
+            margin-bottom: 18px;
+        }
+
+        .btn-verify:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* ── UPLOAD ── */
+        .upload-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .upload-area {
+            width: 140px;
+            height: 116px;
+            flex-shrink: 0;
+            border-radius: var(--radius);
+            cursor: pointer;
+            background: linear-gradient(145deg, #1a5c30, #14532d, #0f3d21);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            border: 2px dashed rgba(74, 222, 128, 0.4);
+            transition: all .2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 24px rgba(22, 163, 74, 0.2);
+            border-color: var(--g4);
+        }
+
+        .upload-area span {
+            font-size: 11px;
+            font-weight: 800;
+            color: #86efac;
+            letter-spacing: 0.5px;
+        }
+
+        .upload-area .uicon {
+            font-size: 26px;
+        }
+
+        .preview-img {
+            width: 116px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: var(--radius);
+            display: none;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+        }
+
+        /* ── WEIGHT + SUBMIT ── */
+        .weight-input {
+            width: 100%;
+            padding: 11px 16px;
+            border: 1.5px solid rgba(74, 222, 128, 0.2);
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-family: 'Nunito', sans-serif;
+            color: #d1fae5;
+            background: rgba(10, 30, 18, 0.7);
+            outline: none;
+            transition: all .2s;
+            margin-bottom: 16px;
+        }
+
+        .weight-input:focus {
+            border-color: var(--g3);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.12);
+        }
+
+        .weight-input::placeholder {
+            color: #3d7a55;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--orange), #ea580c);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+            transition: all .2s;
+            box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .success-msg {
+            display: none;
+            margin-top: 14px;
+            background: rgba(22, 163, 74, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            border-radius: var(--radius);
+            padding: 13px 16px;
+            color: #86efac;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+        }
+
+        .error-msg {
+            font-size: 11px;
+            color: #ef4444;
+            margin-top: 4px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* ── RIGHT PANEL ── */
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ── COLLECTOR CARD ── */
+        .collector-inner {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .collector-photo {
+            width: 86px;
+            height: 86px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 3px solid rgba(74, 222, 128, 0.25);
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .collector-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #d1fae5;
+        }
+
+        .meta-row {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-g {
+            background: rgba(74, 222, 128, 0.15);
+            color: #86efac;
+            border: 1px solid rgba(74, 222, 128, 0.25);
+        }
+
+        .badge-b {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--g3);
+            animation: blink 2s infinite;
+            display: inline-block;
+        }
+
+        /* ── MAP ── */
+        .map-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            background: rgba(22, 163, 74, 0.06);
+            border-bottom: 1px solid rgba(74, 222, 128, 0.12);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .map-toggle .mtitle {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text2);
+            flex: 1;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .toggle-sw {
+            width: 40px;
+            height: 22px;
+            background: rgba(74, 222, 128, 0.1);
+            border-radius: 11px;
+            position: relative;
+            transition: background .3s;
+            flex-shrink: 0;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+        }
+
+        .toggle-sw.on {
+            background: var(--g3);
+            border-color: var(--g3);
+        }
+
+        .toggle-sw::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            transition: transform .3s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-sw.on::after {
+            transform: translateX(18px);
+        }
+
+        #map-container {
+            height: 250px;
+            display: none;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 20, 13, 0.95);
+            color: #d1fae5;
+            font-size: 11px;
+            padding: 7px 14px;
+            display: flex;
+            gap: 18px;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+        }
+
+        .eta {
+            background: var(--g4);
+            color: var(--g2);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 11px;
+        }
+
+        @media (max-width: 860px) {
+            .layout {
+                grid-template-columns: 1fr;
+                padding: 20px 16px 40px;
+            }
+
+            .page-title {
+                grid-column: 1;
+            }
+
+            .right-col {
+                display: contents;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .layout {
+                padding: 16px 12px 30px;
+                gap: 16px;
+            }
+
+            .page-title h1 {
+                font-size: 20px;
+            }
+
+            .otp-box {
+                width: 40px;
+                height: 44px;
+                font-size: 18px;
+            }
+
+            .upload-row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .upload-area {
+                width: 100%;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="nav-left">
+            <div class="nav-location">
+                <span class="loc-label">📍 HOME ▾</span>
+            </div>
+        </div>
+        <a class="nav-logo" href="index.html">Re<span>Bin</span></a>
+        <div class="nav-links">
+            <a href="index.html">HOME</a>
+            <a href="points.html">POINTS</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
+            <a href="about.html">ABOUT</a>
+            <a href="connect.html">CONNECT</a>
+            <a href="index.html#cart" class="nav-cart-btn">🛒 CART</a>
+            <div class="nav-avatar" onclick="window.location.href='rebin_profile.html'">K</div>
+        </div>
+    </nav>
+
+    <div class="layout">
+
+        <div class="page-title">
+            <h1>Place a Pickup Request</h1>
+            <span class="pill">♻ LIVE</span>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="hicon hicon-g">🔑</div>
+                <h2>Current Request</h2>
+            </div>
+            <div class="card-body">
+
+                <div class="field-label">Enter Unique ID of Collector</div>
+                <div class="otp-row">
+                    <input type="text" inputmode="numeric" pattern="\d*" class="otp-box" maxlength="1" id="o1" />
+                    <input type="text" inputmode="numeric" pattern="\d*" class="otp-box" maxlength="1" id="o2" />
+                    <input type="text" inputmode="numeric" pattern="\d*" class="otp-box" maxlength="1" id="o3" />
+                    <input type="text" inputmode="numeric" pattern="\d*" class="otp-box" maxlength="1" id="o4" />
+                </div>
+                <button class="btn-verify" onclick="checkId()">✓ Verify Collector ID</button>
+
+                <div id="submission-section" style="display: none;">
+                    <div class="upload-row">
+                        <div class="upload-area" id="upload-area"
+                            onclick="document.getElementById('img-input').click()">
+                            <input type="file" id="img-input" accept="image/*" onchange="previewImage(event)"
+                                style="display:none" />
+                            <div class="uicon" id="u-icon">📷</div>
+                            <span id="u-text">UPLOAD IMAGE</span>
+                            <img id="preview-img" class="preview-img" src="" alt="preview"
+                                style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:inherit;" />
+                        </div>
+                    </div>
+                    <div class="error-msg" id="img-error">⚠ Please upload an image.</div>
+
+                    <div class="field-label" style="margin-bottom:9px;">Total Weight (kg)</div>
+                    <input class="weight-input" type="number" id="weight"
+                        placeholder="Enter weight shown on weighing machine…" />
+                    <div class="error-msg" id="weight-error">⚠ Please enter the weight.</div>
+
+                    <div class="field-label" style="margin-bottom:9px;">Total Money Paid (₹)</div>
+                    <input class="weight-input" type="number" id="money"
+                        placeholder="Enter total money paid to the user…" />
+                    <div class="error-msg" id="money-error">⚠ Please enter the money paid.</div>
+
+                    <button class="btn-submit" id="submit-btn" onclick="submitRequest()">SUBMIT DATA →</button>
+                    <div class="success-msg" id="success-msg">✅ Request submitted! Collector has been notified.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-col">
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="hicon hicon-g">👷</div>
+                    <h2>Collector's Detail</h2>
+                    <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+                        <span class="status-dot"></span>
+                        <span class="badge badge-g">Active</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="collector-inner">
+                        <img class="collector-photo" src="" alt="Collector" style="display:none;"
+                            onerror="this.style.background='#1a3a25'" />
+                        <div>
+                            <div class="collector-name">Loading Collector...</div>
+                            <div class="meta-row status-meta">🕐 --:--</div>
+                            <div class="meta-row rating-meta">⭐ Rating: --</div>
+                            <div class="meta-row phone-meta">📞 +91 ----------</div>
+                            <div style="margin-top:8px;"><span class="badge badge-b">ID: ----</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="map-toggle" onclick="toggleMap()">
+                    <span>🗺️</span>
+                    <span class="mtitle">Live Collector Routing</span>
+                    <div class="toggle-sw" id="map-sw"></div>
+                </div>
+                <div id="map-container">
+                    <div id="map"></div>
+                    <div class="map-bar">
+                        <span>📍 Locating...</span>
+                        <span>↔ -- km</span>
+                        <span>ETA <span class="eta">~-- min</span></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const API = '/api';
+        const token = localStorage.getItem('rebin_token');
+        const params = new URLSearchParams(window.location.search);
+        const pickupId = params.get('pickupId');
+
+        let pickupData = null;
+        let userData = null;
+        let collectorData = null;
+        let leafletMap = null;
+        let collectorMarker = null;
+        let userMarker = null;
+        let routeLine = null;
+        let trackingSocket = null;
+
+        // ══════════════════════════════════════
+        //  LOAD PICKUP DATA
+        // ══════════════════════════════════════
+        async function loadPickup() {
+            if (!pickupId || !token) return;
+            try {
+                const r = await fetch(`${API}/pickup/${pickupId}`, {
+                    headers: { 'authorization': token }
+                });
+                const data = await r.json();
+                pickupData = data.pickup;
+                collectorData = data.collector;
+                userData = data.user; // Store user details including address
+
+                // Update collector card
+                updateCollectorCard();
+
+                // Pre-fill OTP if assigned
+                if (pickupData.otp) {
+                    const otpDigits = pickupData.otp.split('');
+                    const boxes = document.querySelectorAll('.otp-box');
+                    otpDigits.forEach((d, i) => {
+                        if (boxes[i]) {
+                            boxes[i].value = d;
+                            boxes[i].classList.add('filled');
+                        }
+                    });
+                }
+
+                // Setup Socket.IO tracking
+                if (pickupData.status === 'assigned' || pickupData.status === 'in_transit') {
+                    setupTracking();
+                }
+            } catch (err) {
+                console.error('Failed to load pickup:', err);
+            }
+        }
+
+        function updateCollectorCard() {
+            if (!collectorData) {
+                const collectorCard = document.querySelector('.right-col .card:first-child');
+                if (collectorCard) {
+                    const body = collectorCard.querySelector('.card-body');
+                    body.innerHTML = `
+                        <div style="text-align:center;padding:20px;color:#9ca3af;">
+                            <div style="font-size:36px;margin-bottom:10px;">🕐</div>
+                            <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Not Yet Dispatched</div>
+                            <div style="font-size:13px;">Collector will be assigned closer to your pickup date</div>
+                        </div>`;
+                    const statusBadge = collectorCard.querySelector('.badge-g');
+                    if (statusBadge) { statusBadge.textContent = 'Pending'; statusBadge.style.background = '#fbbf24'; statusBadge.style.color = '#92400e'; }
+                    const statusDot = collectorCard.querySelector('.status-dot');
+                    if (statusDot) statusDot.style.background = '#fbbf24';
+                }
+                return;
+            }
+
+            const nameEl = document.querySelector('.collector-name');
+            if (nameEl) nameEl.textContent = collectorData.name;
+            const photoEl = document.querySelector('.collector-photo');
+            if (photoEl) {
+                photoEl.src = collectorData.photo || `https://randomuser.me/api/portraits/men/${Math.floor(Math.random() * 99)}.jpg`;
+                photoEl.style.display = 'block';
+            }
+            const statusRow = document.querySelector('.status-meta');
+            if (statusRow) statusRow.textContent = `🕐 ${pickupData.pickup_time} – ${pickupData.status === 'assigned' ? 'Scheduled' : pickupData.status}`;
+
+            const ratingRow = document.querySelector('.rating-meta');
+            if (ratingRow) ratingRow.textContent = `⭐ Rating: ${collectorData.rating || '4.8'}`;
+
+            const phoneRow = document.querySelector('.phone-meta');
+            if (phoneRow) phoneRow.textContent = `📞 ${collectorData.phone || '+91 ----------'}`;
+
+            const badgeEl = document.querySelector('.badge-b');
+            if (badgeEl) badgeEl.textContent = `ID: ${collectorData.collectorId || '----'}`;
+        }
+
+        // ══════════════════════════════════════
+        //  OTP & SUBMISSION HELPERS
+        // ══════════════════════════════════════
+        const boxes = document.querySelectorAll('.otp-box');
+        boxes.forEach((b, i) => {
+            b.addEventListener('input', () => {
+                b.value = b.value.replace(/[^0-9A-Za-z]/g, ''); // allow alphanumeric collector ID
+                b.classList.toggle('filled', !!b.value);
+                if (b.value && i < boxes.length - 1) boxes[i + 1].focus();
+            });
+            b.addEventListener('keydown', e => {
+                if (e.key === 'Backspace' && !b.value && i > 0) {
+                    boxes[i - 1].classList.remove('filled');
+                    boxes[i - 1].focus();
+                }
+            });
+        });
+
+        async function checkId() {
+            const val = [...boxes].map(b => b.value).join('');
+            if (val.length < 4) {
+                boxes.forEach(b => b.classList.add('error'));
+                setTimeout(() => boxes.forEach(b => b.classList.remove('error')), 1500);
+                return;
+            }
+
+            // Bypass verification per request to accept any 4-digit code
+            boxes.forEach(b => {
+                b.style.borderColor = '#4ade80';
+                b.style.background = 'rgba(74,222,128,0.08)';
+            });
+            document.getElementById('submission-section').style.display = 'block';
+        }
+
+        function previewImage(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const img = document.getElementById('preview-img');
+                img.src = ev.target.result;
+                img.style.display = 'block';
+                document.getElementById('u-icon').style.display = 'none';
+                document.getElementById('u-text').style.display = 'none';
+                document.getElementById('upload-area').style.border = 'none';
+                document.getElementById('img-error').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function submitRequest() {
+            const w = document.getElementById('weight').value;
+            const m = document.getElementById('money').value;
+            const imgEl = document.getElementById('preview-img');
+            const imgInput = document.getElementById('img-input');
+
+            if (!w || !m || imgEl.style.display !== 'block') {
+                alert('Please fill all fields and upload an image');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('actual_weight', w);
+                formData.append('money_paid', m);
+                if (imgInput.files[0]) formData.append('waste_image', imgInput.files[0]);
+
+                const r = await fetch(`${API}/pickup/${pickupId}/complete`, {
+                    method: 'POST',
+                    headers: { 'authorization': token },
+                    body: formData
+                });
+                const data = await r.json();
+                if (data.success) {
+                    document.getElementById('success-msg').style.display = 'block';
+                    const btn = document.getElementById('submit-btn');
+                    btn.textContent = '✓ SUBMITTED';
+                    btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
+                    btn.disabled = true;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // ══════════════════════════════════════
+        //  SOCKET.IO TRACKING
+        // ══════════════════════════════════════
+        function setupTracking() {
+            if (trackingSocket) return;
+            trackingSocket = io('/tracking');
+
+            trackingSocket.on('connect', () => {
+                trackingSocket.emit('join-pickup-room', pickupId);
+            });
+
+            trackingSocket.on('pickup:assigned', () => {
+                console.log('Pickup was assigned! Live reloading pickup data...');
+                loadPickup();
+            });
+
+            trackingSocket.on('collector:location', (data) => {
+                if (leafletMap && collectorMarker) {
+                    collectorMarker.setLatLng([data.lat, data.lng]);
+                    if (routeLine && userMarker) {
+                        routeLine.setLatLngs([
+                            userMarker.getLatLng(),
+                            collectorMarker.getLatLng()
+                        ]);
+                    }
+                    const uPos = userMarker.getLatLng();
+                    const dist = haversine(uPos.lat, uPos.lng, data.lat, data.lng);
+                    const eta = Math.ceil((dist / 20) * 60);
+                    const mapBar = document.querySelector('.map-bar');
+                    if (mapBar) {
+                        mapBar.innerHTML = `
+                            <span>📍 ${pickupData && pickupData.pickup_location ? pickupData.pickup_location.address.split(',')[0] : 'Profile Address'}</span>
+                            <span>↔ ${dist.toFixed(1)} km</span>
+                            <span>ETA <span class="eta">~${eta} min</span></span>`;
+                    }
+                }
+            });
+        }
+
+        function haversine(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        let mapInit = false, mapOn = false;
+        function toggleMap() {
+            mapOn = !mapOn;
+            document.getElementById('map-sw').classList.toggle('on', mapOn);
+            document.getElementById('map-container').style.display = mapOn ? 'block' : 'none';
+            if (mapOn && !mapInit) {
+                mapInit = true;
+                setTimeout(() => {
+                    let uLat = 24.4374, uLng = 77.1608;
+                    let cLat = 24.438, cLng = 77.165;
+                    if (pickupData && pickupData.pickup_location && pickupData.pickup_location.lat) {
+                        uLat = pickupData.pickup_location.lat; uLng = pickupData.pickup_location.lng;
+                    } else if (userData && userData.address && userData.address.lat) {
+                        uLat = userData.address.lat; uLng = userData.address.lng;
+                    }
+                    if (collectorData) {
+                        if (collectorData.location && collectorData.location.lat) {
+                            cLat = collectorData.location.lat; cLng = collectorData.location.lng;
+                        } else if (collectorData.address && collectorData.address.lat) {
+                            cLat = collectorData.address.lat; cLng = collectorData.address.lng;
+                        }
+                    }
+                    leafletMap = L.map('map', { zoomControl: false }).setView([uLat, uLng], 15);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(leafletMap);
+                    L.control.zoom({ position: 'topright' }).addTo(leafletMap);
+                    const uIcon = L.divIcon({ html: '<div style="background:#14532d;width:14px;height:14px;border-radius:50%;border:3px solid #4ade80;box-shadow:0 0 0 5px #4ade8033;"></div>', iconSize: [20, 20], iconAnchor: [10, 10], className: '' });
+                    userMarker = L.marker([uLat, uLng], { icon: uIcon }).addTo(leafletMap).bindPopup('<b>📍 Your Location</b>').openPopup();
+                    const cIcon = L.divIcon({ html: '<div style="background:#1e40af;width:14px;height:14px;border-radius:50%;border:3px solid #60a5fa;box-shadow:0 0 0 5px #60a5fa33;"></div>', iconSize: [20, 20], iconAnchor: [10, 10], className: '' });
+                    collectorMarker = L.marker([cLat, cLng], { icon: cIcon }).addTo(leafletMap).bindPopup(`<b>👷 ${collectorData ? collectorData.name : 'Collector'}</b>`);
+                    routeLine = L.polyline([[uLat, uLng], [cLat, cLng]], { color: '#16a34a', weight: 3, dashArray: '8 6', opacity: .8 }).addTo(leafletMap);
+                    const dist = haversine(uLat, uLng, cLat, cLng);
+                    const eta = Math.ceil((dist / 20) * 60);
+                    const mapBar = document.querySelector('.map-bar');
+                    if (mapBar) {
+                        mapBar.innerHTML = `
+                            <span>📍 ${pickupData && pickupData.pickup_location ? pickupData.pickup_location.address.split(',')[0] : 'Profile Address'}</span>
+                            <span>↔ ${dist.toFixed(1)} km</span>
+                            <span>ETA <span class="eta">~${eta} min</span></span>`;
+                    }
+                }, 100);
+            }
+        }
+        loadPickup();
+    </script>
+    <script src="global-header.js"></script>
+</body>
+
+</html>

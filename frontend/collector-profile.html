@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rebin – Collector Profile</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="responsive.css" />
+    <style>
+        :root {
+            --green: #00C27A;
+            --green-dark: #009B62;
+            --green-light: #E6FBF3;
+            --amber: #FFB020;
+            --ink: #0D1F1A;
+            --ink2: #2B3F38;
+            --muted: #7A9490;
+            --surface: #F4FAF8;
+            --card: #FFFFFF;
+            --border: #D6EEE8;
+            --radius: 18px;
+            --shadow: 0 4px 24px rgba(0, 194, 122, 0.08);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--surface);
+            color: var(--ink);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        header {
+            background: var(--card);
+            border-bottom: 1.5px solid var(--border);
+            padding: 0 20px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            color: var(--green);
+        }
+
+        .logo span {
+            color: var(--ink);
+        }
+
+        /* .edit-btn {
+            background: var(--green-light);
+            color: var(--green);
+            border: 1.5px solid var(--green);
+            border-radius: 10px;
+            padding: 7px 16px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .edit-btn:hover {
+            background: var(--green);
+            color: white;
+        } */
+
+        main {
+            padding: 0 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* HERO PROFILE CARD */
+        .profile-hero {
+            background: linear-gradient(135deg, var(--green) 0%, #00A868 100%);
+            border-radius: var(--radius);
+            margin: 20px 0 16px;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 194, 122, 0.25);
+            animation: fadeIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-hero::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .profile-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -20px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-avatar-wrap {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .profile-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.18);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 36px;
+            color: white;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: white;
+            color: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            color: white;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .profile-role {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.12);
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-val {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            color: white;
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.65);
+            margin-top: 2px;
+        }
+
+        /* INFO CARDS */
+        .info-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1.5px solid var(--border);
+            padding: 20px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.5s ease both;
+        }
+
+        .info-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .info-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .card-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--green-light);
+            color: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .info-row:first-of-type {
+            padding-top: 0;
+        }
+
+        .info-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--ink2);
+            margin-top: 2px;
+        }
+
+        .masked-aadhar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot-group {
+            letter-spacing: 3px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .location-live {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green-light);
+            border: 1.5px solid rgba(0, 194, 122, 0.25);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 14px;
+            color: var(--green-dark);
+            font-weight: 500;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            flex-shrink: 0;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.4);
+                opacity: 0.6;
+            }
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--card);
+            border-top: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .nav-item.active {
+            color: var(--green);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+        }
+
+        .nav-item.active .nav-icon {
+            filter: drop-shadow(0 0 6px rgba(0, 194, 122, 0.5));
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">Re<span>Bin</span></div>
+        <div class="header-right" style="display:flex; align-items:center; gap:12px;">
+            <div class="avatar-sm" id="header-avatar"
+                style="width:34px; height:34px; border-radius:50%; background:var(--green-light); border:1.5px solid var(--green); display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:700; color:var(--green); font-size:13px; cursor:pointer;">
+                ?</div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+        <div class="profile-hero">
+            <div class="profile-avatar-wrap">
+                <div class="profile-avatar" id="cp-avatar"
+                    style="display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:white;background:#14532d;">
+                    –</div>
+                <div class="verified-badge" id="cp-verified" style="display:none;">✔</div>
+            </div>
+            <div class="profile-name" id="cp-name">Loading...</div>
+            <div class="profile-role" id="cp-role">Collector</div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-val" id="cp-pickups">0</div>
+                    <div class="stat-lbl">Pickups</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val" id="cp-rating">0★</div>
+                    <div class="stat-lbl">Rating</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val" id="cp-collected">0 kg</div>
+                    <div class="stat-lbl">Collected</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERSONAL INFO -->
+        <div class="info-card">
+            <div class="card-title">
+                <div class="card-title-icon">👤</div>
+                Personal Info
+            </div>
+            <div class="info-row">
+                <div class="info-icon">🪪</div>
+                <div class="info-content">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value" id="cp-fullname">–</div>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-icon">📞</div>
+                <div class="info-content">
+                    <div class="info-label">Mobile Number</div>
+                    <div class="info-value" id="cp-phone">–</div>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-icon">📧</div>
+                <div class="info-content">
+                    <div class="info-label">Email</div>
+                    <div class="info-value" id="cp-email">–</div>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-icon">🆔</div>
+                <div class="info-content">
+                    <div class="info-label">Collector ID</div>
+                    <div class="info-value" id="cp-collectorid">–</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADDRESS -->
+        <div class="info-card">
+            <div class="card-title">
+                <div class="card-title-icon">🏠</div>
+                Permanent Address
+                <button onclick="toggleAddrForm()"
+                    style="margin-left:auto; background:var(--green-light); color:var(--green); border:1.5px solid var(--green); border-radius:8px; padding:4px 10px; font-family:'Syne',sans-serif; font-weight:700; font-size:11px; cursor:pointer;">✎
+                    Edit</button>
+            </div>
+
+            <!-- Address Edit Form (Hidden by default) -->
+            <div id="addr-form"
+                style="display:none; flex-direction:column; gap:10px; margin-bottom:15px; padding:12px; background:rgba(22,163,74,0.05); border-radius:12px; border:1px dashed var(--green);">
+                <div style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Update
+                    Address</div>
+                <input type="text" id="f-street" placeholder="Street / Colony"
+                    style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); font-family:inherit; outline:none;" />
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="f-city" placeholder="City"
+                        style="flex:2; padding:10px; border-radius:8px; border:1.5px solid var(--border); font-family:inherit; outline:none;" />
+                    <input type="text" id="f-pincode" placeholder="Pincode"
+                        style="flex:1; padding:10px; border-radius:8px; border:1.5px solid var(--border); font-family:inherit; outline:none;" />
+                </div>
+                <div style="display:flex; gap:8px; margin-top:5px;">
+                    <button onclick="saveCollectorAddress()"
+                        style="flex:1; padding:9px; background:var(--green); color:white; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Save
+                        Address</button>
+                    <button onclick="toggleAddrForm()"
+                        style="padding:9px; background:#f3f4f6; color:#374151; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Cancel</button>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-icon">📍</div>
+                <div class="info-content">
+                    <div class="info-label">Street / Colony</div>
+                    <div class="info-value" id="cp-street">Not set</div>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-icon">🏙️</div>
+                <div class="info-content">
+                    <div class="info-label">City / District</div>
+                    <div class="info-value" id="cp-city">Not set</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CURRENT LOCATION -->
+        <div class="info-card">
+            <div class="card-title">
+                <div class="card-title-icon">📡</div>
+                Current Location
+            </div>
+            <div class="location-live">
+                <div class="live-dot"></div>
+                <span id="cp-location">Fetching location...</span>
+            </div>
+        </div>
+
+        <!-- LOGOUT -->
+        <div style="padding:0 16px 24px;">
+            <button onclick="collectorLogout()"
+                style="width:100%;padding:14px;background:linear-gradient(135deg,#fee2e2,#fecaca);color:#dc2626;border:1.5px solid #fca5a5;border-radius:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">🚪
+                Logout</button>
+        </div>
+
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a class="nav-item" href="collector-home.html">
+            <span class="nav-icon">🏠</span>Home
+        </a>
+        <a class="nav-item active" href="collector-profile.html">
+            <span class="nav-icon">👤</span>Profile
+        </a>
+        <a class="nav-item" href="collector-history.html">
+            <span class="nav-icon">📦</span>History
+        </a>
+    </nav>
+    <script>
+        const API = '/api';
+        const token = localStorage.getItem('rebin_token');
+
+        function toggleAddrForm() {
+            const f = document.getElementById('addr-form');
+            f.style.display = f.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        async function saveCollectorAddress() {
+            const street = document.getElementById('f-street').value.trim();
+            const city = document.getElementById('f-city').value.trim();
+            const pincode = document.getElementById('f-pincode').value.trim();
+            if (!street || !city || !pincode) return alert('Please fill all fields');
+
+            try {
+                const r = await fetch(`${API}/collector-address`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'authorization': token },
+                    body: JSON.stringify({ street, city, pincode })
+                });
+                const d = await r.json();
+                if (d.success) {
+                    toggleAddrForm();
+                    loadCollectorProfile();
+                } else {
+                    alert(d.error || 'Failed to save');
+                }
+            } catch (err) {
+                console.error('Fetch error:', err);
+                alert('Connection error or invalid response from server. Check if server is running!');
+            }
+        }
+
+        function collectorLogout() {
+            localStorage.removeItem('rebin_token');
+            localStorage.removeItem('rebin_role');
+            localStorage.removeItem('rebin_user');
+            window.location.href = 'rebin_profile.html';
+        }
+
+        async function loadCollectorProfile() {
+            if (!token) { window.location.href = 'rebin_profile.html'; return; }
+            try {
+                const r = await fetch(`${API}/profile`, { headers: { 'authorization': token } });
+                if (r.status === 401) { collectorLogout(); return; }
+                const data = await r.json();
+                const user = data.user;
+                const ci = data.collectorInfo;
+
+                // Avatar
+                const initials = user.name.split(' ').map(w => w[0]).join('').toUpperCase();
+                document.getElementById('cp-avatar').textContent = initials;
+
+                // Verified badge
+                if (ci && ci.is_verified) {
+                    document.getElementById('cp-verified').style.display = 'flex';
+                }
+
+                // Name & role
+                document.getElementById('cp-name').textContent = user.name;
+                document.getElementById('cp-role').textContent = ci && ci.is_verified
+                    ? `Verified Collector · ${ci.address && ci.address.city ? ci.address.city : 'India'}`
+                    : 'Collector · India';
+
+                // Stats — show real data, 0 for new collectors
+                if (ci) {
+                    document.getElementById('cp-pickups').textContent = ci.total_pickups || 0;
+                    document.getElementById('cp-rating').textContent = (ci.rating || 0) + '★';
+                    const kg = ci.total_collected_kg || 0;
+                    document.getElementById('cp-collected').textContent = kg >= 1000 ? (kg / 1000).toFixed(1) + ' T' : kg + ' kg';
+                }
+
+                // Personal info
+                document.getElementById('cp-fullname').textContent = user.name;
+                document.getElementById('cp-phone').textContent = user.phone || '–';
+                document.getElementById('cp-email').textContent = user.email || '–';
+                document.getElementById('cp-collectorid').textContent = ci ? ci.collectorId : '–';
+
+                // Address
+                if (ci && ci.address && ci.address.street) {
+                    document.getElementById('cp-street').textContent = ci.address.street;
+                    document.getElementById('cp-city').textContent = `${ci.address.city || ''} – ${ci.address.pincode || ''}`;
+                }
+
+                // Live location
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    document.getElementById('cp-location').textContent = `Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)} · Updated just now`;
+                    fetch(`${API}/location`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'authorization': token },
+                        body: JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+                    }).catch(() => { });
+                }, () => {
+                    document.getElementById('cp-location').textContent = 'Location not available';
+                });
+
+            } catch (err) {
+                console.error('Profile load error:', err);
+                document.getElementById('cp-name').textContent = 'Error loading profile';
+            }
+        }
+
+        loadCollectorProfile();
+    </script>
+    <script src="global-header.js"></script>
+
+</body>
+
+</html>

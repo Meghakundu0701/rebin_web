@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rebin – Pickup History</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="responsive.css" />
+  <style>
+    :root {
+      --green: #00C27A;
+      --green-dark: #009B62;
+      --green-light: #E6FBF3;
+      --amber: #FFB020;
+      --ink: #0D1F1A;
+      --ink2: #2B3F38;
+      --muted: #7A9490;
+      --surface: #F4FAF8;
+      --card: #FFFFFF;
+      --border: #D6EEE8;
+      --radius: 18px;
+      --shadow: 0 4px 24px rgba(0, 194, 122, 0.08);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    header {
+      background: var(--card);
+      border-bottom: 1.5px solid var(--border);
+      padding: 0 20px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--green);
+    }
+
+    .logo span {
+      color: var(--ink);
+    }
+
+    main {
+      padding: 0 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* EARNINGS SUMMARY BANNER */
+    .earnings-banner {
+      background: linear-gradient(135deg, #0D1F1A 0%, #1A3530 100%);
+      border-radius: var(--radius);
+      margin: 20px 0 20px;
+      padding: 24px 20px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.4s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .earnings-banner::before {
+      content: '';
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: rgba(0, 194, 122, 0.08);
+    }
+
+    .earnings-banner::after {
+      content: '';
+      position: absolute;
+      right: 30px;
+      bottom: -30px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(0, 194, 122, 0.06);
+    }
+
+    .eb-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .eb-amount {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 36px;
+      color: var(--green);
+      margin-bottom: 14px;
+    }
+
+    .eb-amount sup {
+      font-size: 18px;
+      margin-right: 2px;
+    }
+
+    .eb-stats {
+      display: flex;
+      gap: 24px;
+    }
+
+    .eb-stat .val {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: white;
+    }
+
+    .eb-stat .lbl {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.45);
+      margin-top: 2px;
+    }
+
+    /* FILTER ROW */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 16px;
+      scrollbar-width: none;
+    }
+
+    .filter-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-chip {
+      flex-shrink: 0;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+
+    .filter-chip.active {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
+    }
+
+    /* MONTH GROUP */
+    .month-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 18px 0 10px;
+    }
+
+    /* HISTORY ITEM */
+    .history-item {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.4s ease both;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .history-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .hi-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .c1 {
+      background: #E8F0FF;
+      color: #3B7FFF;
+    }
+
+    .c2 {
+      background: #FFE8F5;
+      color: #E040A0;
+    }
+
+    .c3 {
+      background: #FFF4E0;
+      color: #E08000;
+    }
+
+    .c4 {
+      background: #E0FAF4;
+      color: #009B62;
+    }
+
+    .c5 {
+      background: #F0E8FF;
+      color: #7B3FFF;
+    }
+
+    .c6 {
+      background: #FFE8E8;
+      color: #E04040;
+    }
+
+    .hi-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .hi-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hi-subtext {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hi-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .hi-amount {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--green);
+    }
+
+    .hi-date {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .paid-chip {
+      display: inline-block;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 4px;
+      font-family: 'Syne', sans-serif;
+    }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: var(--card);
+      border-top: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .nav-item.active {
+      color: var(--green);
+    }
+
+    .nav-icon {
+      font-size: 22px;
+    }
+
+    .nav-item.active .nav-icon {
+      filter: drop-shadow(0 0 6px rgba(0, 194, 122, 0.5));
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Re<span>Bin</span></div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--muted)">
+        April 2026
+      </div>
+      <div class="avatar-sm" id="header-avatar"
+        style="width:34px; height:34px; border-radius:50%; background:var(--green-light); border:1.5px solid var(--green); display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:700; color:var(--green); font-size:13px; cursor:pointer;">
+        ?</div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- EARNINGS BANNER -->
+    <div class="earnings-banner">
+      <div class="eb-label">Total Earnings This Month</div>
+      <div class="eb-amount"><sup>₹</sup>0</div>
+      <div class="eb-stats">
+        <div class="eb-stat">
+          <div class="val">0</div>
+          <div class="lbl">Pickups Done</div>
+        </div>
+        <div class="eb-stat">
+          <div class="val">0 kg</div>
+          <div class="lbl">Waste Collected</div>
+        </div>
+        <div class="eb-stat">
+          <div class="val">0 ★</div>
+          <div class="lbl">Avg Rating</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-row" id="filter-row">
+      <div class="filter-chip active" onclick="applyFilter('all', this)">All</div>
+      <div class="filter-chip" onclick="applyFilter('week', this)">This Week</div>
+      <div class="filter-chip" onclick="applyFilter('month', this)">This Month</div>
+      <div class="filter-chip" onclick="applyFilter('last_month', this)">Last Month</div>
+      <div class="filter-chip" onclick="applyFilter('year', this)">This Year</div>
+    </div>
+
+    <div id="history-container">
+      <div style="text-align:center; padding: 40px 20px; color: var(--muted); font-family: 'DM Sans';">
+        No completed pickups yet.<br>Start accepting requests to earn money!
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a class="nav-item" href="collector-home.html">
+      <span class="nav-icon">🏠</span>Home
+    </a>
+    <a class="nav-item" href="collector-profile.html">
+      <span class="nav-icon">👤</span>Profile
+    </a>
+    <a class="nav-item active" href="collector-history.html">
+      <span class="nav-icon">📦</span>History
+    </a>
+  </nav>
+
+  <script>
+    const API = '/api';
+    const token = localStorage.getItem('rebin_token');
+    let allPickups = [];
+
+    async function loadHistory() {
+      if (!token) return;
+      try {
+        const r = await fetch(`${API}/pickups/collector?status=completed`, {
+          headers: { 'authorization': token }
+        });
+        const data = await r.json();
+        allPickups = data.assigned || [];
+
+        // Render everything by default
+        renderHistory(allPickups);
+      } catch (err) {
+        console.error('History load error:', err);
+      }
+    }
+
+    function applyFilter(filterType, btnEl) {
+      // Update active class
+      const chips = document.querySelectorAll('.filter-chip');
+      chips.forEach(c => c.classList.remove('active'));
+      btnEl.classList.add('active');
+
+      // Filter data
+      const now = new Date();
+      let filtered = [];
+
+      if (filterType === 'all') {
+        filtered = allPickups;
+      } else if (filterType === 'week') {
+        // Last 7 days
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        filtered = allPickups.filter(p => new Date(p.created_at) >= weekAgo);
+      } else if (filterType === 'month') {
+        // Same month and year
+        filtered = allPickups.filter(p => {
+          const d = new Date(p.created_at);
+          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        });
+      } else if (filterType === 'last_month') {
+        // Previous month
+        const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+        const year = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+        filtered = allPickups.filter(p => {
+          const d = new Date(p.created_at);
+          return d.getMonth() === lastMonth && d.getFullYear() === year;
+        });
+      } else if (filterType === 'year') {
+        // Same year
+        filtered = allPickups.filter(p => new Date(p.created_at).getFullYear() === now.getFullYear());
+      }
+
+      renderHistory(filtered);
+    }
+
+    function renderHistory(completed) {
+      const container = document.getElementById('history-container');
+
+      if (completed.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 40px 20px; color: var(--muted); font-family: 'DM Sans';">
+                No completed pickups match this filter.<br>Start accepting requests to earn money!
+            </div>`;
+      } else {
+        container.innerHTML = ''; // Clear container
+
+        const colors = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
+
+        completed.forEach((p, i) => {
+          const name = p.user ? p.user.name : 'Unknown';
+          const initials = name.split(' ').map(w => w[0]).join('').toUpperCase();
+          const colorClass = colors[i % colors.length];
+          const addr = p.pickup_location && p.pickup_location.address ? p.pickup_location.address.split(',')[0] : 'Address N/A';
+          const kg = p.actual_weight || p.total_kg || 0;
+          const money = p.money_paid || 0;
+          const date = new Date(p.created_at);
+          const dateStr = date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
+          const item = document.createElement('div');
+          item.className = 'history-item';
+          item.style.animationDelay = `${i * 0.05}s`;
+          item.innerHTML = `
+                    <div class="hi-avatar ${colorClass}">${initials}</div>
+                    <div class="hi-body">
+                        <div class="hi-name">${name}</div>
+                        <div class="hi-subtext"><span>⚖️ ${kg} kg</span><span>·</span><span>📍 ${addr}</span></div>
+                        <div class="paid-chip">✔ Paid</div>
+                    </div>
+                    <div class="hi-right">
+                        <div class="hi-amount">₹${money}</div>
+                        <div class="hi-date">${dateStr}</div>
+                    </div>`;
+          container.appendChild(item);
+        });
+      }
+
+      // Update earnings banner
+      const totalEarnings = completed.reduce((s, p) => s + (p.money_paid || 0), 0);
+      const totalKg = completed.reduce((s, p) => s + (p.actual_weight || p.total_kg || 0), 0);
+
+      const ebAmount = document.querySelector('.eb-amount');
+      if (ebAmount) ebAmount.innerHTML = `<sup>₹</sup>${totalEarnings.toLocaleString('en-IN')}`;
+
+      const ebStats = document.querySelectorAll('.eb-stat .val');
+      if (ebStats[0]) ebStats[0].textContent = completed.length;
+      if (ebStats[1]) ebStats[1].textContent = totalKg + ' kg';
+    }
+
+    // Load Data
+    loadHistory();
+  </script>
+  <script src="global-header.js"></script>
+
+</body>
+
+</html>

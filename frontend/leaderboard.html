@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReBin – Leaderboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="responsive.css" />
+  <style>
+    :root {
+      --green-deep: #1a4d2e;
+      --green-mid: #2d7a4f;
+      --green-bright: #4caf50;
+      --green-light: #a8e6b8;
+      --teal: #00b894;
+      --accent-red: #e74c3c;
+      --bg-cream: #f4f0e6;
+      --card-bg: #fdf6e3;
+      --text-dark: #1a2e1a;
+      --text-mid: #3d5a3d;
+      --white: #ffffff;
+      --gold: #FFD700;
+      --silver: #C0C0C0;
+      --bronze: #CD7F32;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg-cream);
+      min-height: 100vh;
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--green-deep);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(10px, 3vw, 28px);
+      height: 64px;
+      box-shadow: 0 4px 24px rgba(26, 77, 46, 0.35);
+      gap: 8px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .nav-location .loc-label {
+      color: var(--green-light);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(18px, 4vw, 26px);
+      font-weight: 700;
+      color: var(--green-bright);
+      cursor: pointer;
+      transition: opacity 0.2s;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .nav-logo:hover {
+      opacity: 0.85;
+    }
+
+    .nav-logo span {
+      color: var(--white);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.5vw, 22px);
+      flex-shrink: 0;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: clamp(9px, 1.1vw, 12px);
+      letter-spacing: 1px;
+      transition: color 0.2s;
+      text-transform: uppercase;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.nav-active {
+      color: var(--green-bright);
+      border-bottom-color: var(--green-bright);
+    }
+
+    .nav-cart-btn {
+      background: var(--accent-red);
+      color: white;
+      font-weight: 800;
+      font-size: clamp(9px, 1.1vw, 12px);
+      border: none;
+      border-radius: 30px;
+      padding: 7px clamp(10px, 1.5vw, 18px);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: transform 0.15s;
+      text-decoration: none;
+    }
+
+    .nav-cart-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .nav-avatar {
+      width: 34px;
+      height: 34px;
+      background: var(--green-light);
+      color: var(--green-deep);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: white;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    #leaderboardPage {
+      position: relative;
+      z-index: 1;
+      min-height: calc(100vh - 64px);
+      padding: clamp(20px, 3vw, 50px) clamp(14px, 4vw, 60px);
+      overflow: hidden;
+    }
+
+    #leaderboardPage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #060f09 0%, #0a1a10 40%, #0d2015 100%);
+      z-index: -1;
+    }
+
+    .lb-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) scale(0)
+      }
+
+      100% {
+        transform: translateY(-10vh) scale(1);
+        opacity: 0
+      }
+    }
+
+    .lb-header {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      margin-bottom: clamp(24px, 4vw, 48px);
+    }
+
+    .lb-crown {
+      font-size: clamp(36px, 6vw, 56px);
+      display: block;
+      margin-bottom: 4px;
+      animation: crownBob 2s ease-in-out infinite;
+    }
+
+    @keyframes crownBob {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-3deg)
+      }
+
+      50% {
+        transform: translateY(-6px) rotate(3deg)
+      }
+    }
+
+    .lb-title-main {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 10vw, 96px);
+      color: var(--gold);
+      letter-spacing: 8px;
+      line-height: 0.9;
+      text-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+    }
+
+    .lb-title-sub {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(32px, 7vw, 64px);
+      color: white;
+      letter-spacing: 12px;
+      line-height: 1;
+    }
+
+    .lb-tagline {
+      color: rgba(168, 230, 184, 0.6);
+      font-size: 13px;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    .lb-stats {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(8px, 2vw, 16px);
+      max-width: 860px;
+      margin: 0 auto clamp(28px, 5vw, 56px);
+    }
+
+    .lb-stat-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: clamp(12px, 2vw, 20px) 12px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s;
+    }
+
+    .lb-stat-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .lb-stat-icon {
+      font-size: clamp(20px, 3vw, 28px);
+      margin-bottom: 6px;
+    }
+
+    .lb-stat-val {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(16px, 2.5vw, 26px);
+      font-weight: 700;
+      color: var(--green-bright);
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+    }
+
+    .lb-stat-label {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .podium-section {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: clamp(10px, 2.5vw, 28px);
+      margin-bottom: clamp(32px, 5vw, 60px);
+      flex-wrap: wrap;
+    }
+
+    .podium-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: transform 0.3s;
+    }
+
+    .podium-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .podium-rank-badge {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      padding: 2px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .rank-1 .podium-rank-badge {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #5a3000;
+      box-shadow: 0 4px 16px rgba(255, 215, 0, 0.5);
+      font-size: 20px;
+      padding: 3px 16px;
+    }
+
+    .rank-2 .podium-rank-badge {
+      background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+      color: #333;
+    }
+
+    .rank-3 .podium-rank-badge {
+      background: linear-gradient(135deg, #CD7F32, #A0522D);
+      color: #fff;
+    }
+
+    .podium-avatar-wrap {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .podium-avatar {
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 900;
+      position: relative;
+      overflow: hidden;
+      color: white;
+    }
+
+    .rank-1 .podium-avatar {
+      width: clamp(80px, 12vw, 120px);
+      height: clamp(80px, 12vw, 120px);
+      border: 5px solid #FFD700;
+      box-shadow: 0 0 0 8px rgba(255, 215, 0, 0.2), 0 16px 40px rgba(0, 0, 0, 0.4);
+      animation: pulseGold 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseGold {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 8px rgba(255, 215, 0, 0.2), 0 16px 40px rgba(0, 0, 0, 0.4)
+      }
+
+      50% {
+        box-shadow: 0 0 0 14px rgba(255, 215, 0, 0.35), 0 20px 50px rgba(0, 0, 0, 0.5)
+      }
+    }
+
+    .rank-2 .podium-avatar {
+      width: clamp(66px, 10vw, 100px);
+      height: clamp(66px, 10vw, 100px);
+      border: 4px solid #C0C0C0;
+      box-shadow: 0 0 0 5px rgba(192, 192, 192, 0.2);
+    }
+
+    .rank-3 .podium-avatar {
+      width: clamp(58px, 8vw, 86px);
+      height: clamp(58px, 8vw, 86px);
+      border: 4px solid #CD7F32;
+      box-shadow: 0 0 0 5px rgba(205, 127, 50, 0.2);
+    }
+
+    .crown-icon {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      animation: crownBob 2s ease-in-out infinite;
+      filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.6));
+    }
+
+    .podium-name {
+      font-size: clamp(12px, 1.8vw, 16px);
+      font-weight: 900;
+      color: white;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .podium-kg {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(11px, 1.5vw, 14px);
+      color: var(--green-light);
+      font-weight: 700;
+    }
+
+    .podium-stand {
+      width: 100%;
+      min-width: clamp(70px, 10vw, 110px);
+      border-radius: 10px 10px 0 0;
+      padding: 10px 0;
+      margin-top: 12px;
+    }
+
+    .rank-1 .podium-stand {
+      background: linear-gradient(180deg, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.1));
+      border: 2px solid rgba(255, 215, 0, 0.4);
+      height: 60px;
+    }
+
+    .rank-2 .podium-stand {
+      background: linear-gradient(180deg, rgba(192, 192, 192, 0.2), rgba(192, 192, 192, 0.05));
+      border: 2px solid rgba(192, 192, 192, 0.3);
+      height: 44px;
+    }
+
+    .rank-3 .podium-stand {
+      background: linear-gradient(180deg, rgba(205, 127, 50, 0.2), rgba(205, 127, 50, 0.05));
+      border: 2px solid rgba(205, 127, 50, 0.3);
+      height: 32px;
+    }
+
+    .lb-list-section {
+      position: relative;
+      z-index: 2;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .lb-list-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .lb-list-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(18px, 2.5vw, 28px);
+      color: white;
+      letter-spacing: 2px;
+    }
+
+    .lb-list-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(76, 175, 80, 0.5), transparent);
+    }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.5vw, 16px);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: clamp(10px, 1.8vw, 14px) clamp(12px, 2vw, 20px);
+      margin-bottom: 8px;
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s, background 0.2s;
+      overflow: hidden;
+      animation: rowSlide 0.5s ease both;
+    }
+
+    @keyframes rowSlide {
+      from {
+        opacity: 0;
+        transform: translateX(-16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .lb-row:hover {
+      transform: translateX(5px);
+      background: rgba(76, 175, 80, 0.12);
+    }
+
+    .lb-row.top-three {
+      border-color: rgba(255, 215, 0, 0.2);
+      background: rgba(255, 215, 0, 0.06);
+    }
+
+    .lb-rank-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(16px, 2.5vw, 24px);
+      min-width: 28px;
+      text-align: center;
+    }
+
+    .rank-gold {
+      color: #FFD700;
+      text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+    }
+
+    .rank-silver {
+      color: #C0C0C0;
+    }
+
+    .rank-bronze {
+      color: #CD7F32;
+    }
+
+    .rank-normal {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .lb-avatar-small {
+      width: clamp(32px, 4.5vw, 44px);
+      height: clamp(32px, 4.5vw, 44px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: clamp(12px, 2vw, 16px);
+      flex-shrink: 0;
+      color: white;
+    }
+
+    .lb-name {
+      flex: 1;
+      font-size: clamp(13px, 1.8vw, 16px);
+      font-weight: 800;
+      color: white;
+      min-width: 0;
+    }
+
+    .lb-name span {
+      display: block;
+      font-size: clamp(9px, 1.2vw, 11px);
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 600;
+      margin-top: 1px;
+    }
+
+    .lb-bar-wrap {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      margin-top: 3px;
+      overflow: hidden;
+    }
+
+    .lb-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .lb-kg {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(11px, 1.5vw, 14px);
+      font-weight: 700;
+      color: var(--green-light);
+      min-width: 60px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .lb-recycle {
+      font-size: 16px;
+      animation: spin 6s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg)
+      }
+    }
+
+    .lb-footer {
+      position: relative;
+      z-index: 2;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-top: clamp(20px, 3vw, 36px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      max-width: 860px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .lb-truck-anim {
+      position: absolute;
+      bottom: 10px;
+      animation: driveTruck 12s linear infinite;
+    }
+
+    @keyframes driveTruck {
+      0% {
+        left: -120px
+      }
+
+      100% {
+        left: 110%
+      }
+    }
+
+    .nav-btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      max-width: 860px;
+      margin: 24px auto 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn-row a {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 0.15s;
+    }
+
+    .nav-btn-row a:hover {
+      transform: translateY(-2px);
+    }
+
+    @media(max-width:768px) {
+      #leaderboardPage {
+        padding: 24px 14px;
+      }
+
+      .lb-title-main {
+        font-size: clamp(42px, 12vw, 80px);
+        letter-spacing: 4px;
+      }
+
+      .lb-title-sub {
+        font-size: clamp(28px, 8vw, 54px);
+        letter-spacing: 8px;
+      }
+
+      .lb-stat-card {
+        border-radius: 12px;
+      }
+    }
+
+    @media(max-width:640px) {
+      .nav-links {
+        position: fixed;
+        top: 64px;
+        right: 0;
+        background: var(--green-deep);
+        flex-direction: column;
+        padding: 20px 18px;
+        gap: 16px;
+        width: 220px;
+        min-height: 100vh;
+        box-shadow: -4px 0 24px rgba(0, 0, 0, 0.35);
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+        align-items: flex-start;
+        border-left: 2px solid rgba(76, 175, 80, 0.2);
+        z-index: 201;
+      }
+
+      .nav-links.open {
+        transform: translateX(0);
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-logo {
+        font-size: 20px;
+      }
+
+      .lb-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .podium-section {
+        gap: 6px;
+        margin-bottom: clamp(20px, 4vw, 40px);
+      }
+
+      .lb-kg {
+        min-width: 48px;
+        font-size: 11px;
+      }
+
+      .lb-row {
+        padding: 10px 12px;
+      }
+
+      .nav-btn-row a {
+        padding: 10px 16px;
+        font-size: 12px;
+      }
+    }
+
+    @media(max-width:400px) {
+      .lb-stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .rank-1 .podium-avatar {
+        width: 72px;
+        height: 72px;
+      }
+
+      .rank-2 .podium-avatar {
+        width: 56px;
+        height: 56px;
+      }
+
+      .rank-3 .podium-avatar {
+        width: 48px;
+        height: 48px;
+      }
+
+      .lb-bar-wrap {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-left">
+      <div class="nav-location"><span class="loc-label">📍 HOME ▾</span></div>
+    </div>
+    <a class="nav-logo" href="index.html">Re<span>Bin</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">HOME</a>
+      <a href="points.html">POINTS</a>
+      <a href="leaderboard.html" class="nav-active">LEADERBOARD</a>
+      <a href="about.html">ABOUT</a>
+      <a href="connect.html">CONNECT</a>
+      <a href="index.html" class="nav-cart-btn">🛒 CART</a>
+      <div class="nav-avatar" onclick="window.location.href='rebin_profile.html'">K</div>
+    </div>
+    <div class="hamburger" id="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div id="leaderboardPage">
+    <div class="lb-particles" id="lbParticles"></div>
+    <div class="lb-header">
+      <span class="lb-crown">👑</span>
+      <div class="lb-title-main">LEADER</div>
+      <div class="lb-title-sub">BOARD</div>
+      <div class="lb-tagline">Don't be trashy — recycle!</div>
+    </div>
+    <div class="lb-stats">
+      <div class="lb-stat-card">
+        <div class="lb-stat-icon">♻️</div>
+        <div class="lb-stat-val" id="statTotalKg">0</div>
+        <div class="lb-stat-label">Total KG Recycled</div>
+      </div>
+      <div class="lb-stat-card">
+        <div class="lb-stat-icon">📱</div>
+        <div class="lb-stat-val" id="statActiveUsers">0</div>
+        <div class="lb-stat-label">App Users</div>
+      </div>
+      <div class="lb-stat-card">
+        <div class="lb-stat-icon">🌱</div>
+        <div class="lb-stat-val" id="statTrees">0</div>
+        <div class="lb-stat-label">Trees Saved</div>
+      </div>
+      <div class="lb-stat-card">
+        <div class="lb-stat-icon">🏅</div>
+        <div class="lb-stat-val" id="statTopRecycler">—</div>
+        <div class="lb-stat-label">Top Recycler</div>
+      </div>
+    </div>
+    <div class="podium-section" id="podiumSection"></div>
+    <div class="lb-list-section">
+      <div class="lb-list-header">
+        <div class="lb-list-title">ALL RECYCLERS</div>
+        <div class="lb-list-line"></div>
+      </div>
+      <div id="lbList"></div>
+    </div>
+    <div class="lb-footer">
+      <div class="lb-truck-anim">
+        <svg width="80" height="50" viewBox="0 0 160 120" fill="none">
+          <rect x="20" y="40" width="100" height="55" rx="8" fill="#2d7a4f" />
+          <rect x="100" y="48" width="38" height="47" rx="8" fill="#1a4d2e" />
+          <rect x="106" y="54" width="24" height="22" rx="4" fill="#a8e6b8" opacity="0.7" />
+          <circle cx="42" cy="98" r="14" fill="#111" stroke="#555" stroke-width="3" />
+          <circle cx="42" cy="98" r="7" fill="#333" />
+          <circle cx="118" cy="98" r="14" fill="#111" stroke="#555" stroke-width="3" />
+          <circle cx="118" cy="98" r="7" fill="#333" />
+          <text x="58" y="75" font-size="22" text-anchor="middle" fill="white">♻️</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="nav-btn-row">
+      <a href="index.html" style="background:linear-gradient(135deg,#1a4d2e,#2d7a4f);color:white;">➕ Add Recyclables</a>
+      <a href="points.html" style="background:linear-gradient(135deg,#0d3320,#1a6640);color:white;">🏆 My Points</a>
+      <a href="about.html"
+        style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);">ℹ️ About ReBin</a>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api';
+    const token = localStorage.getItem('rebin_token');
+    const AVATAR_COLORS = ['#6b48cc', '#1abc9c', '#27ae60', '#e74c3c', '#3498db', '#9b59b6', '#f39c12', '#1a7a42'];
+    let currentUserData = null;
+    try { currentUserData = JSON.parse(localStorage.getItem('rebin_user')); } catch (e) { }
+    const CURRENT_USER = currentUserData ? currentUserData.name : 'Guest';
+    const DEFAULT_LB = [
+      { name: 'Ananya', kg: 80.0, joinDate: 'Jan 2025', loggedIn: true },
+      { name: 'Rohit', kg: 28.3, joinDate: 'Feb 2025', loggedIn: true },
+      { name: 'Priyanka', kg: 25.0, joinDate: 'Jan 2025', loggedIn: true },
+      { name: 'Manish', kg: 24.8, joinDate: 'Mar 2025', loggedIn: true },
+      { name: 'Riya', kg: 22.0, joinDate: 'Feb 2025', loggedIn: true },
+      { name: 'Tina', kg: 19.8, joinDate: 'Apr 2025', loggedIn: true },
+      { name: 'Koustav', kg: 18.0, joinDate: 'Mar 2025', loggedIn: true },
+      { name: 'Tanni', kg: 15.0, joinDate: 'Apr 2025', loggedIn: true }
+    ];
+
+    async function loadLeaderboard() {
+      let leaderboard = DEFAULT_LB;
+      if (token) {
+        try {
+          const r = await fetch(`${API}/leaderboard`);
+          if (r.ok) {
+            const data = await r.json();
+            if (data.leaderboard && data.leaderboard.length > 0) {
+              leaderboard = data.leaderboard;
+            }
+          }
+        } catch (e) { }
+      }
+      renderLeaderboard(leaderboard);
+    }
+
+    function renderLeaderboard(leaderboard) {
+      const sorted = [...leaderboard].sort((a, b) => b.kg - a.kg);
+      const maxKg = sorted[0] ? sorted[0].kg : 1;
+
+      const pc = document.getElementById('lbParticles');
+      if (pc && pc.children.length < 18) {
+        for (let i = 0; i < 18; i++) {
+          const p = document.createElement('div'); p.className = 'particle';
+          p.style.left = Math.random() * 100 + '%';
+          p.style.width = p.style.height = (3 + Math.random() * 7) + 'px';
+          p.style.animationDuration = (8 + Math.random() * 14) + 's';
+          p.style.animationDelay = (Math.random() * 10) + 's';
+          p.style.background = `rgba(${Math.random() > 0.5 ? '76,175,80' : '168,230,184'},${0.3 + Math.random() * 0.4})`;
+          pc.appendChild(p);
+        }
+      }
+
+      const totalKg = sorted.reduce((s, u) => s + u.kg, 0);
+      const activeUsers = leaderboard.filter(u => u.loggedIn !== false).length;
+      const treesSaved = Math.floor(totalKg / 2);
+      document.getElementById('statTotalKg').textContent = totalKg.toFixed(1);
+      document.getElementById('statActiveUsers').textContent = activeUsers;
+      document.getElementById('statTrees').textContent = treesSaved;
+      document.getElementById('statTopRecycler').textContent = sorted[0] ? sorted[0].name : '—';
+
+      const podiumOrder = [sorted[1], sorted[0], sorted[2]];
+      const podiumRanks = [2, 1, 3];
+      document.getElementById('podiumSection').innerHTML = podiumOrder.map((user, idx) => {
+        if (!user) return '';
+        const rank = podiumRanks[idx];
+        const colorIdx = leaderboard.findIndex(u => u.name === user.name);
+        const color = AVATAR_COLORS[colorIdx % AVATAR_COLORS.length];
+        const isFirst = rank === 1;
+        return `<div class="podium-card rank-${rank}" style="order:${idx}">
+      <div class="podium-rank-badge">#${rank}</div>
+      <div class="podium-avatar-wrap">
+        ${isFirst ? '<div class="crown-icon">👑</div>' : ''}
+        <div class="podium-avatar" style="background:radial-gradient(circle at 35% 35%,${color}cc,${color}88);">${user.name[0]}</div>
+      </div>
+      <div class="podium-name">${user.name}</div>
+      <div class="podium-kg">${user.kg} KG</div>
+      <div class="podium-stand"></div>
+    </div>`;
+      }).join('');
+
+      document.getElementById('lbList').innerHTML = sorted.map((user, idx) => {
+        const rank = idx + 1;
+        const pct = (user.kg / maxKg) * 100;
+        const colorIdx = leaderboard.findIndex(u => u.name === user.name);
+        const color = AVATAR_COLORS[colorIdx % AVATAR_COLORS.length];
+        const barColor = rank === 1 ? '#FFD700' : rank === 2 ? '#C0C0C0' : rank === 3 ? '#CD7F32' : '#4caf50';
+        const rankClass = rank === 1 ? 'rank-gold' : rank === 2 ? 'rank-silver' : rank === 3 ? 'rank-bronze' : 'rank-normal';
+        const rowClass = rank <= 3 ? 'lb-row top-three' : 'lb-row';
+        const isMe = user.name === CURRENT_USER;
+        return `<div class="${rowClass}" style="${isMe ? 'border-color:rgba(76,175,80,0.5);background:rgba(76,175,80,0.12);' : ''}">
+      <div class="lb-rank-num ${rankClass}">${rank}</div>
+      <div class="lb-avatar-small" style="background:radial-gradient(circle at 35% 35%,${color}cc,${color}88);">${user.name[0]}</div>
+      <div class="lb-name">
+        ${user.name}${isMe ? '<span style="color:var(--green-bright);font-weight:800;"> ◀ You</span>' : ''}
+        <span>Member since ${user.joinDate || 'N/A'}</span>
+        <div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%;background:${barColor};"></div></div>
+      </div>
+      <div class="lb-kg">${user.kg} kg</div>
+      <div class="lb-recycle">♻️</div>
+    </div>`;
+      }).join('');
+    }
+
+    loadLeaderboard();
+  </script>
+
+
+
+
+  <script src="global-header.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReBin – Smart Waste Solutions</title>
+
+    <!-- Authentication Guard -->
+    <script>
+        if (!localStorage.getItem('rebin_token')) {
+            window.location.href = 'rebin_profile.html';
+        }
+    </script>
+
+    <!-- Leaflet Local Search -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="responsive.css" />
+    <style>
+        :root {
+            --green-deep: #1a4d2e;
+            --green-mid: #2d7a4f;
+            --green-bright: #4caf50;
+            --green-light: #a8e6b8;
+            --teal: #00b894;
+            --lime: #8BC34A;
+            --accent-red: #e74c3c;
+            --accent-yellow: #f9e4b7;
+            --accent-gold: #e6b84a;
+            --bg-cream: #f4f0e6;
+            --card-bg: #fdf6e3;
+            --text-dark: #1a2e1a;
+            --text-mid: #3d5a3d;
+            --white: #ffffff;
+            --shadow: 0 8px 32px rgba(26, 77, 46, 0.13);
+            --shadow-card: 0 4px 16px rgba(26, 77, 46, 0.10);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-cream);
+            min-height: 100vh;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: var(--green-deep);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 clamp(10px, 3vw, 28px);
+            height: 64px;
+            box-shadow: 0 4px 24px rgba(26, 77, 46, 0.35);
+            gap: 8px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .nav-location .loc-label {
+            color: var(--green-light);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .nav-location .loc-sub {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 10px;
+        }
+
+        .nav-logo {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(18px, 4vw, 26px);
+            font-weight: 700;
+            color: var(--green-bright);
+            cursor: pointer;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .nav-logo:hover {
+            opacity: 0.85;
+        }
+
+        .nav-logo span {
+            color: var(--white);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 1.5vw, 22px);
+            flex-shrink: 0;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: clamp(9px, 1.1vw, 12px);
+            letter-spacing: 1px;
+            transition: color 0.2s;
+            text-transform: uppercase;
+            padding-bottom: 2px;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.nav-active {
+            color: var(--green-bright);
+            border-bottom-color: var(--green-bright);
+        }
+
+        .nav-cart-btn {
+            background: var(--accent-red);
+            color: white;
+            font-weight: 800;
+            font-size: clamp(9px, 1.1vw, 12px);
+            border: none;
+            border-radius: 30px;
+            padding: 7px clamp(10px, 1.5vw, 18px);
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: transform 0.15s;
+            text-decoration: none;
+        }
+
+        .nav-cart-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-avatar {
+            width: 34px;
+            height: 34px;
+            background: var(--green-light);
+            color: var(--green-deep);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 4px;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .main-wrapper {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            min-height: calc(100vh - 64px);
+        }
+
+        .cart-panel {
+            padding: clamp(16px, 3vw, 36px) clamp(14px, 3vw, 32px) 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: var(--bg-cream);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-size: clamp(18px, 2.5vw, 22px);
+            font-weight: 900;
+            color: var(--green-deep);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title::after {
+            content: '';
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: var(--green-bright);
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.2
+            }
+        }
+
+        .item-card {
+            background: var(--card-bg);
+            border: 2px solid rgba(76, 175, 80, 0.18);
+            border-radius: 16px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.4s ease both;
+            flex-wrap: wrap;
+        }
+
+        .item-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--green-bright), var(--green-mid));
+            border-radius: 20px 0 0 20px;
+        }
+
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 77, 46, 0.15);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .item-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(76, 175, 80, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+
+        .item-info {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .item-name {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .item-metric {
+            font-size: 11px;
+            color: var(--text-mid);
+            font-weight: 600;
+        }
+
+        .item-qty-controls {
+            display: flex;
+            align-items: center;
+            background: rgba(76, 175, 80, 0.08);
+            border-radius: 30px;
+            border: 1.5px solid rgba(76, 175, 80, 0.2);
+            overflow: hidden;
+        }
+
+        .qty-btn {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--green-mid);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+
+        .qty-btn:hover {
+            background: var(--green-bright);
+            color: white;
+        }
+
+        .qty-input {
+            width: 54px;
+            height: 32px;
+            background: none;
+            border: none;
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            outline: none;
+        }
+
+        .qty-input::-webkit-inner-spin-button,
+        .qty-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .recycle-icon {
+            font-size: 18px;
+            color: var(--green-bright);
+            animation: spin 8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 6px;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .remove-btn:hover {
+            color: var(--accent-red);
+            background: rgba(231, 76, 60, 0.08);
+        }
+
+        .add-item-section {
+            background: rgba(76, 175, 80, 0.06);
+            border: 2px dashed rgba(76, 175, 80, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .add-item-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--green-mid);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .add-item-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .add-select,
+        .add-weight-input {
+            flex: 1;
+            min-width: 100px;
+            border: 1.5px solid rgba(76, 175, 80, 0.25);
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            background: var(--card-bg);
+            color: var(--text-dark);
+            outline: none;
+        }
+
+        .add-weight-input {
+            flex: 0 0 80px;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .add-btn {
+            background: var(--green-mid);
+            color: white;
+            font-weight: 800;
+            font-size: 13px;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 18px;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.15s;
+            white-space: nowrap;
+        }
+
+        .add-btn:hover {
+            background: var(--green-deep);
+            transform: translateY(-1px);
+        }
+
+        .total-bar {
+            background: var(--accent-yellow);
+            border: 2px solid var(--accent-gold);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .total-label {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--green-deep);
+        }
+
+        .total-value {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(18px, 2.5vw, 24px);
+            font-weight: 700;
+            color: var(--green-deep);
+            transition: all 0.3s;
+        }
+
+        .total-value.pop {
+            animation: valuePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes valuePop {
+            0% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.15);
+                color: var(--green-bright)
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .place-request-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            font-size: clamp(13px, 1.8vw, 16px);
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            border: none;
+            border-radius: 14px;
+            padding: 15px 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 24px rgba(26, 77, 46, 0.25);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .place-request-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(26, 77, 46, 0.35);
+        }
+
+        .place-request-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-panel {
+            background: var(--green-deep);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(76, 175, 80, 0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .truck-animation {
+            position: relative;
+            z-index: 1;
+            animation: truckBounce 2.5s ease-in-out infinite;
+        }
+
+        @keyframes truckBounce {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-1deg)
+            }
+
+            50% {
+                transform: translateY(-8px) rotate(1deg)
+            }
+        }
+
+        .points-card {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 20px 28px;
+            text-align: center;
+            width: 100%;
+            backdrop-filter: blur(8px);
+        }
+
+        .points-label {
+            color: var(--green-light);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .points-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 38px;
+            font-weight: 700;
+            color: var(--green-bright);
+            text-shadow: 0 0 24px rgba(76, 175, 80, 0.5);
+            transition: all 0.3s;
+        }
+
+        .points-sub {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* .schedule-card{position:relative;z-index:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:18px;padding:18px 20px;width:100%;backdrop-filter:blur(8px);} */
+        /* .schedule-title{color:var(--green-light);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;} */
+        /* .schedule-slot{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);} */
+        /* .schedule-slot:last-child{border:none;} */
+        .slot-time {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .slot-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .slot-badge.avail {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--green-bright);
+        }
+
+        .slot-badge.busy {
+            background: rgba(231, 76, 60, 0.15);
+            color: #ff7c72;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 28px;
+            color: var(--text-mid);
+            display: none;
+        }
+
+        .empty-state.show {
+            display: block;
+        }
+
+        .empty-state-icon {
+            font-size: 44px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--green-deep);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 12px 40px rgba(26, 77, 46, 0.4);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid var(--green-bright);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(4px);
+            padding: 16px;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-box {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: clamp(20px, 4vw, 36px);
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 24px 80px rgba(26, 77, 46, 0.3);
+            text-align: center;
+            transform: scale(0.85);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid rgba(76, 175, 80, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.show .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--green-deep);
+            margin-bottom: 6px;
+        }
+
+        .modal-sub {
+            font-size: 13px;
+            color: var(--text-mid);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .modal-items {
+            background: rgba(76, 175, 80, 0.07);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .modal-item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed rgba(76, 175, 80, 0.2);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-item-row:last-child {
+            border: none;
+        }
+
+        .modal-total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0 0;
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--green-deep);
+            border-top: 2px solid var(--accent-gold);
+            margin-top: 6px;
+        }
+
+        .modal-confirm-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            font-size: 15px;
+            font-weight: 900;
+            border: none;
+            border-radius: 12px;
+            padding: 13px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: transform 0.15s;
+        }
+
+        .modal-confirm-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .modal-cancel-btn {
+            background: none;
+            border: none;
+            color: var(--text-mid);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .modal-cancel-btn:hover {
+            color: var(--accent-red);
+        }
+
+        .location-field-row {
+            display: flex;
+            gap: 8px;
+            position: relative;
+        }
+
+        .edit-addr-btn {
+            background: rgba(76, 175, 80, 0.15);
+            border: 1px solid var(--green-mid);
+            color: var(--green-deep);
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+            height: 38px;
+            display: flex;
+            align-items: center;
+        }
+
+        .addr-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1.5px solid var(--green-light);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            z-index: 500;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .addr-option {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--bg-cream);
+            transition: background 0.2s;
+        }
+
+        .addr-option:last-child {
+            border: none;
+        }
+
+        .addr-option:hover {
+            background: var(--bg-cream);
+        }
+
+        .addr-option .title {
+            font-weight: 800;
+            font-size: 13px;
+            color: var(--green-deep);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .addr-option .sub {
+            font-size: 11px;
+            color: var(--text-mid);
+            margin-top: 2px;
+        }
+
+        .addr-option .badge {
+            font-size: 9px;
+            background: var(--green-mid);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        @media(max-width:900px) {
+            .main-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .info-panel {
+                display: none;
+            }
+
+            .cart-panel {
+                padding: 20px 16px 28px;
+            }
+        }
+
+        @media(max-width:768px) {
+            .panel-title {
+                font-size: clamp(16px, 4vw, 20px);
+            }
+
+            .total-bar {
+                padding: 12px 16px;
+            }
+
+            .place-request-btn {
+                padding: 13px 20px;
+            }
+        }
+
+        @media(max-width:640px) {
+            .nav-links {
+                position: fixed;
+                top: 64px;
+                right: 0;
+                background: var(--green-deep);
+                flex-direction: column;
+                padding: 20px 18px;
+                gap: 14px;
+                width: 220px;
+                min-height: 100vh;
+                box-shadow: -4px 0 24px rgba(0, 0, 0, 0.35);
+                transform: translateX(100%);
+                transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+                align-items: flex-start;
+                border-left: 2px solid rgba(76, 175, 80, 0.2);
+                z-index: 201;
+            }
+
+            .nav-links.open {
+                transform: translateX(0);
+            }
+
+            .nav-links a {
+                font-size: 13px;
+                padding: 8px 0;
+                width: 100%;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            }
+
+            .nav-links .nav-cart-btn {
+                width: 100%;
+                text-align: center;
+                border-radius: 10px;
+                padding: 10px 16px;
+                font-size: 13px;
+                margin-top: 8px;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-logo {
+                font-size: 20px;
+            }
+
+            .nav-left .loc-sub {
+                display: none;
+            }
+
+            .cart-panel {
+                padding: 16px 12px 20px;
+            }
+
+            .add-item-row {
+                flex-direction: column;
+            }
+
+            .add-weight-input {
+                flex: 1;
+            }
+
+            .add-btn {
+                width: 100%;
+            }
+
+            .item-card {
+                flex-wrap: wrap;
+            }
+
+            .item-qty-controls {
+                order: 3;
+            }
+
+            .total-bar {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .total-value {
+                font-size: clamp(18px, 5vw, 24px);
+            }
+        }
+
+        @media(max-width:420px) {
+            .modal-box {
+                padding: 20px 14px;
+            }
+
+            .item-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 22px;
+            }
+
+            .panel-title {
+                font-size: 15px;
+            }
+        }
+
+        /* Enhanced Price Section UI */
+        .price-section {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            margin-top: 4px;
+        }
+
+        .price-header {
+            background: linear-gradient(135deg, var(--green-mid), var(--green-deep));
+            color: white;
+            padding: 16px;
+            border-radius: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .price-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(26, 77, 46, 0.3);
+        }
+
+        .price-list-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 0 0 16px 16px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            max-height: 420px;
+            overflow-y: auto;
+            border: 1px solid rgba(168, 230, 184, 0.4);
+            border-top: none;
+        }
+
+        .price-search {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 2px solid var(--green-light);
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .price-search:focus {
+            border-color: var(--green-bright);
+        }
+
+        .price-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .price-card {
+            background: var(--white);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(76, 175, 80, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .price-card.hidden {
+            display: none;
+        }
+
+        .price-card b {
+            color: var(--green-deep);
+            display: block;
+            font-size: 15px;
+            margin-bottom: 4px;
+            border-bottom: 1px solid var(--bg-cream);
+        }
+
+        .price-card div {
+            font-size: 13px;
+            color: var(--text-mid);
+            line-height: 1.4;
+        }
+
+        .highlight {
+            color: var(--green-mid);
+            font-weight: 800;
+        }
+
+        /* Schedule Section */
+        .schedule-section {
+            background: var(--card-bg);
+            border: 2px solid rgba(76, 175, 80, 0.18);
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 4px;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .field-wrap label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--green-deep);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+
+        .field-wrap input,
+        .location-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid rgba(76, 175, 80, 0.3);
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: 'Nunito', sans-serif;
+            color: var(--text-dark);
+            background: var(--bg-cream);
+            outline: none;
+            transition: border-color .2s;
+            font-weight: 700;
+        }
+
+        .field-wrap input:focus,
+        .location-select:focus {
+            border-color: var(--green-bright);
+        }
+
+        .schedule-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(76, 175, 80, 0.15);
+            border-radius: 10px;
+        }
+
+        .schedule-bar .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green-deep);
+            animation: blink 2s infinite;
+        }
+
+        .schedule-bar span {
+            font-size: 12px;
+            color: var(--green-deep);
+            font-weight: 800;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-left">
+            <div class="nav-location">
+                <span class="loc-label">📍 HOME ▾</span>
+                <span class="loc-sub">Near Taj Mahal</span>
+            </div>
+        </div>
+        <a class="nav-logo" href="index.html">Re<span>Bin</span></a>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html" class="nav-active">HOME</a>
+            <a href="points.html">POINTS</a>
+            <a href="leaderboard.html">LEADERBOARD</a>
+            <a href="about.html">ABOUT</a>
+            <a href="connect.html">CONNECT</a>
+            <a href="index.html#cart" class="nav-cart-btn"
+                onclick="setTimeout(()=>document.getElementById('cartPanel')?.scrollIntoView({behavior:'smooth'}),100)">🛒
+                CART</a>
+            <div class="nav-avatar" onclick="window.location.href='rebin_profile.html'">K</div>
+        </div>
+        <div class="hamburger" id="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="cart-panel" id="cartPanel">
+            <div class="panel-header">
+                <div class="panel-title">♻️ Recycle Cart</div>
+            </div>
+            <div id="cartItems"></div>
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">🗃️</div>
+                <div class="empty-state-text">Your cart is empty. Add items below!</div>
+            </div>
+            <div class="add-item-section">
+                <div class="add-item-title">➕ Add Recyclable Item</div>
+                <div class="add-item-row">
+                    <select class="add-select" id="materialSelect">
+                        <option value="">Select Material…</option>
+                        <option value="Paper">📄 Paper</option>
+                        <option value="Copper">🥇 Copper</option>
+                        <option value="Cardboard">📦 Cardboard</option>
+                        <option value="Plastic">🧴 Plastic</option>
+                        <option value="Glass">🫙 Glass</option>
+                        <option value="Iron">⚙️ Iron / Steel</option>
+                        <option value="Aluminium">🥤 Aluminium</option>
+                        <option value="E-Waste">💻 E-Waste</option>
+                    </select>
+                    <input type="number" class="add-weight-input" id="weightInput" placeholder="kg" min="0.1"
+                        step="0.1" />
+                    <button class="add-btn" onclick="addItem()">Add →</button>
+                </div>
+            </div>
+            <div class="total-bar">
+                <span class="total-label">Total Approx:</span>
+                <span class="total-value" id="totalWeight">0 kg</span>
+            </div>
+
+            <!-- SCHEDULE PICKUP -->
+            <div class="schedule-section">
+                <div class="field-wrap" style="margin-bottom: 12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <label style="margin-bottom:0;">Pickup Location</label>
+                        <button class="edit-addr-btn" id="editAddrBtn" onclick="toggleEditAddress()">✏️ Edit /
+                            New</button>
+                    </div>
+                    <div class="location-field-row">
+                        <input type="text" id="pickup-location" class="location-select"
+                            placeholder="Type to search or select below..." autocomplete="off"
+                            onfocus="showSavedAddresses()" oninput="searchLocations(this.value)" />
+                        <div class="addr-dropdown" id="addrDropdown"></div>
+                    </div>
+                </div>
+                <div class="schedule-grid">
+                    <div class="field-wrap">
+                        <label>Pickup Date</label>
+                        <input type="date" id="pickup-date" />
+                    </div>
+                    <div class="field-wrap">
+                        <label>Pickup Time</label>
+                        <input type="time" id="pickup-time" />
+                    </div>
+                </div>
+                <div class="schedule-bar" id="schedule-bar" style="display:none;">
+                    <div class="dot"></div>
+                    <span id="schedule-text">–</span>
+                </div>
+            </div>
+
+            <button class="place-request-btn" id="placeBtn" onclick="openModal()">🚛 Place Pickup Request</button>
+            <!-- Quick nav buttons -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;">
+                <a href="points.html"
+                    style="display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#1a4d2e,#2d7a4f);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:11px;border-radius:12px;text-decoration:none;transition:transform 0.15s;"
+                    onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">🏆 My
+                    Points</a>
+                <a href="leaderboard.html"
+                    style="display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#5a3000,#a07020);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:11px;border-radius:12px;text-decoration:none;transition:transform 0.15s;"
+                    onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">👑
+                    Leaderboard</a>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <!-- Live Scrap Rates -->
+            <div class="price-section" style="width:100%;position:relative;z-index:2;">
+                <div class="price-header" onclick="togglePriceList()">
+                    💰 Live Scrap Rates ⬇
+                </div>
+                <div class="price-list-container" id="priceList">
+                    <input type="text" id="priceSearch" placeholder="Search e.g. 'Paper' or 'Copper'..."
+                        class="price-search" onkeyup="filterPrices()" />
+                    <div class="price-grid" id="priceGrid">
+                        <div class="price-card" data-material="paper newspaper books">
+                            <b>📄 Paper</b>
+                            <div>Newspaper: <span class="highlight">₹10–13/kg</span></div>
+                            <div>Books: <span class="highlight">₹7–13/kg</span></div>
+                        </div>
+                        <div class="price-card" data-material="cardboard box">
+                            <b>📦 Cardboard</b>
+                            <div>Flat Rate: <span class="highlight">₹10–18/kg</span></div>
+                        </div>
+                        <div class="price-card" data-material="plastic bottle bags hard">
+                            <b>🧴 Plastic</b>
+                            <div>Plastic Mixed: <span class="highlight">₹10–12/kg</span></div>
+                            <div>Plastic Bottles: <span class="highlight">₹12/kg</span></div>
+                            <div>Plastic Bags: <span class="highlight">₹5/kg</span></div>
+                            <div>Hard Plastic: <span class="highlight">₹2-6/kg</span></div>
+                        </div>
+                        <div class="price-card" data-material="copper wire metal">
+                            <b>🥇 Copper</b>
+                            <div>Premium: <span class="highlight">₹750–1200/kg</span></div>
+                        </div>
+                        <div class="price-card" data-material="iron steel metal hms gi">
+                            <b>⚙️ Iron & Steel</b>
+                            <div>Industrial Mild Steel: <span class="highlight">₹22–40/kg</span></div>
+                            <div>Stainless Steel: <span class="highlight">₹45–300/kg</span></div>
+                            <div>Heavy Melting Scrap: <span class="highlight">₹35–40/kg</span></div>
+                            <div>Cast Iron (CI) Scrap: <span class="highlight">₹33–45/kg</span></div>
+                            <div>Industrial/Loose Scrap: <span class="highlight">₹28–38/kg</span></div>
+                            <div>Galvanized Iron (GI) Scrap: <span class="highlight">₹30–50/kg</span></div>
+                        </div>
+                        <div class="price-card" data-material="e-waste cpu pcb laptop hdd tv monitor">
+                            <b>💻 E-Waste</b>
+                            <div>PCBs: <span class="highlight">₹275–350/kg</span></div>
+                            <div>CPUs: <span class="highlight">up to ₹12,000/kg</span></div>
+                            <div>Laptops/CRT TV: <span class="highlight">₹170–300/pc</span></div>
+                            <div>Mixed Electronic Waste: <span class="highlight">₹110–500/kg</span></div>
+                            <div>Wi-Fi Router Scrap: <span class="highlight">₹120/kg</span></div>
+                            <div>Old Computers/Monitor: <span class="highlight">₹100–280/pc</span></div>
+                            <div>AC/Fridge: <span class="highlight">₹850-4000/kg</span></div>
+                            <div>Laptop HDD Scrap: <span class="highlight">₹100/kg</span></div>
+                        </div>
+                        <div class="price-card" data-material="aluminium wire utensils casting">
+                            <b>🥤 Aluminium</b>
+                            <div>Alu Extrusion Scrap (6063/6061): <span class="highlight">₹180-250/kg</span></div>
+                            <div>Alu Utensil/Tense Scrap: <span class="highlight">₹130-195/kg</span></div>
+                            <div>Alu Casting/Purja: <span class="highlight">₹155-195/kg</span></div>
+                            <div>Alu Wire Scrap: <span class="highlight">₹320+/kg</span></div>
+                        </div>
+                        <div class="price-card" data-material="clothes">
+                            <b>🥇 Clothes</b>
+                            <div>Good Condition: <span class="highlight">₹20–55/kg</span></div>
+                        </div>
+                        <div class="price-card" data-material="hair">
+                            <b>💇 Hair</b>
+                            <div>Good Condition: <span class="highlight">₹3000-5000/kg</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="truck-animation">
+                <svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Truck body -->
+                    <rect x="20" y="40" width="100" height="55" rx="8" fill="#2d7a4f" />
+                    <!-- Cab -->
+                    <rect x="100" y="48" width="38" height="47" rx="8" fill="#1a4d2e" />
+                    <!-- Window -->
+                    <rect x="106" y="54" width="24" height="22" rx="4" fill="#a8e6b8" opacity="0.7" />
+                    <!-- Wheels -->
+                    <circle cx="42" cy="98" r="14" fill="#111" stroke="#555" stroke-width="3" />
+                    <circle cx="42" cy="98" r="7" fill="#333" />
+                    <circle cx="118" cy="98" r="14" fill="#111" stroke="#555" stroke-width="3" />
+                    <circle cx="118" cy="98" r="7" fill="#333" />
+                    <!-- Recycle symbol on truck -->
+                    <text x="58" y="75" font-size="22" text-anchor="middle" fill="white">♻️</text>
+                    <!-- ReBin text -->
+                    <text x="58" y="58" font-size="9" font-weight="bold" text-anchor="middle" fill="#a8e6b8"
+                        font-family="monospace">ReBin</text>
+                </svg>
+            </div>
+
+            <!-- Points Card -->
+            <div class="points-card">
+                <div class="points-label">🏆 Your Green Points</div>
+                <div class="points-value" id="pointsDisplay">0</div>
+                <div class="points-sub">Points earned this session</div>
+            </div>
+        </div>
+        <!-- <div class="schedule-card">
+      <div class="schedule-title">📅 Pickup Slots Today</div>
+      <div class="schedule-slot"><span class="slot-time">9:00 AM – 11:00 AM</span><span class="slot-badge avail">Available</span></div>
+      <div class="schedule-slot"><span class="slot-time">12:00 PM – 2:00 PM</span><span class="slot-badge busy">Busy</span></div>
+      <div class="schedule-slot"><span class="slot-time">3:00 PM – 5:00 PM</span><span class="slot-badge avail">Available</span></div>
+      <div class="schedule-slot"><span class="slot-time">6:00 PM – 8:00 PM</span><span class="slot-badge avail">Available</span></div>
+    </div> -->
+    </div>
+    </div>
+
+    <div class="toast" id="toast"><span id="toastIcon">✅</span><span id="toastMsg">Done!</span></div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <div class="modal-icon">🚛</div>
+            <div class="modal-title">Confirm Pickup Request</div>
+            <div class="modal-sub">A ReBin truck will be dispatched to collect your recyclables. Here's your summary:
+            </div>
+            <div class="modal-items" id="modalItems"></div>
+            <button class="modal-confirm-btn" onclick="confirmRequest()">✅ Confirm & Schedule</button>
+            <button class="modal-cancel-btn" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api';
+        const token = localStorage.getItem('rebin_token');
+        const ICONS = {};
+        const POINTS_PER_KG = {};
+
+        // Get user info from localStorage
+        let currentUserData = null;
+        try { currentUserData = JSON.parse(localStorage.getItem('rebin_user')); } catch (e) { }
+        const CURRENT_USER = currentUserData ? currentUserData.name : 'Guest';
+
+        // Update nav avatar
+        if (currentUserData) {
+            const avatarEl = document.querySelector('.nav-avatar');
+            if (avatarEl) avatarEl.textContent = currentUserData.name[0].toUpperCase();
+        }
+
+        function loadState() {
+            try {
+                const s = JSON.parse(localStorage.getItem('rebinCartState') || '{}');
+                return {
+                    cart: s.cart || [],
+                    nextId: s.nextId || 1
+                };
+            } catch (e) { return { cart: [], nextId: 1 }; }
+        }
+        function saveState() {
+            localStorage.setItem('rebinCartState', JSON.stringify({ cart, nextId }));
+        }
+
+        let { cart, nextId } = loadState();
+
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            const empty = document.getElementById('emptyState');
+            const placeBtn = document.getElementById('placeBtn');
+
+            if (cart.length === 0) {
+                container.innerHTML = '';
+                empty.classList.add('show');
+                placeBtn.disabled = true;
+                document.getElementById('totalWeight').textContent = '0.0 kg';
+                document.getElementById('pointsDisplay').textContent = '0';
+                return;
+            }
+
+            empty.classList.remove('show');
+            placeBtn.disabled = false;
+
+            container.innerHTML = cart.map(item => `
+    <div class="item-card" id="card-${item.id}">
+      <div class="item-icon">${ICONS[item.name] || '♻️'}</div>
+      <div class="item-info">
+        <div class="item-name">${item.name}</div>
+        <div class="item-metric">Metric : Per Kg</div>
+      </div>
+      <div class="item-qty-controls">
+        <button class="qty-btn" onclick="changeQty(${item.id}, -0.5)">−</button>
+        <input
+          class="qty-input"
+          type="number"
+          min="0.1" step="0.1"
+          value="${item.kg}"
+          onchange="setQty(${item.id}, this.value)"
+        />
+        <button class="qty-btn" onclick="changeQty(${item.id}, 0.5)">+</button>
+      </div>
+      <span>${item.kg} kg</span>
+      <div class="recycle-icon">♻️</div>
+      <button class="remove-btn" onclick="removeItem(${item.id})">✕</button>
+    </div>
+  `).join('');
+
+            updateTotal();
+        }
+        function updateTotal() {
+            const total = cart.reduce((s, i) => s + i.kg, 0);
+            const el = document.getElementById('totalWeight');
+            el.textContent = total.toFixed(1) + ' kg';
+            el.classList.remove('pop');
+            void el.offsetWidth;
+            el.classList.add('pop');
+            const pts = cart.reduce((s, i) => s + i.kg, 0);
+            document.getElementById('pointsDisplay').textContent = Math.round(pts);
+        }
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id); if (!item) return;
+            item.kg = Math.max(0.1, Math.round((item.kg + delta) * 10) / 10); renderCart(); saveState();
+        }
+        function setQty(id, val) {
+            const item = cart.find(i => i.id === id); if (!item) return;
+            const v = parseFloat(val); if (!isNaN(v) && v > 0) item.kg = Math.round(v * 10) / 10; renderCart(); saveState();
+        }
+        function removeItem(id) {
+            const card = document.getElementById('card-' + id);
+            if (card) {
+                card.style.transition = 'opacity 0.25s,transform 0.25s'; card.style.opacity = '0'; card.style.transform = 'translateX(30px)';
+                setTimeout(() => { cart = cart.filter(i => i.id !== id); renderCart(); saveState(); }, 260);
+            }
+        }
+        function addItem() {
+            const sel = document.getElementById('materialSelect');
+            const wt = document.getElementById('weightInput');
+            const name = sel.value;
+            const kg = parseFloat(wt.value);
+
+            if (!name) { showToast('⚠️', 'Please select a material!'); return; }
+            if (!kg || kg <= 0) { showToast('⚠️', 'Please enter a valid weight!'); return; }
+
+            const existing = cart.find(i => i.name === name);
+            if (existing) {
+                existing.kg = Math.round((existing.kg + kg) * 10) / 10;
+                showToast('✅', `${name} updated to ${existing.kg} kg!`);
+            } else {
+                cart.push({ id: nextId++, name, kg: Math.round(kg * 10) / 10 });
+                showToast('✅', `${ICONS[name] || '♻️'} ${name} added!`);
+            }
+            sel.value = ''; wt.value = '';
+            renderCart(); saveState();
+        }
+
+        // ======= SEARCH & ADDRESS LOGIC =======
+        let selectedLat = null;
+        let selectedLng = null;
+        let lastSearchTimeout = null;
+
+        function toggleEditAddress() {
+            const input = document.getElementById('pickup-location');
+            input.value = '';
+            input.focus();
+            showSavedAddresses();
+        }
+
+        function showSavedAddresses() {
+            const dropdown = document.getElementById('addrDropdown');
+            let userData = null;
+            try { userData = JSON.parse(localStorage.getItem('rebin_user')); } catch (e) { }
+
+            if (userData && userData.addresses && userData.addresses.length > 0) {
+                dropdown.innerHTML = '<div style="padding:10px 16px; font-size:10px; font-weight:800; color:var(--green-mid); background:#f8fdfa;">SAVED ADDRESSES</div>';
+
+                userData.addresses.forEach(addr => {
+                    const opt = document.createElement('div');
+                    opt.className = 'addr-option';
+                    const isDefault = addr.is_default ? '<span class="badge">Default</span>' : '';
+                    opt.innerHTML = `
+                        <div class="title">📍 ${addr.city} ${isDefault}</div>
+                        <div class="sub">${addr.street}, ${addr.pincode}</div>
+                    `;
+                    opt.onclick = () => selectAddress({
+                        display_name: `${addr.street}, ${addr.city}, ${addr.pincode}`,
+                        lat: addr.lat,
+                        lon: addr.lng,
+                        isSaved: true
+                    });
+                    dropdown.appendChild(opt);
+                });
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function searchLocations(query) {
+            const dropdown = document.getElementById('addrDropdown');
+            if (query.length < 3) {
+                if (query.length === 0) showSavedAddresses();
+                return;
+            }
+
+            clearTimeout(lastSearchTimeout);
+            lastSearchTimeout = setTimeout(async () => {
+                dropdown.innerHTML = '<div style="padding:20px; text-align:center; font-size:12px; color:var(--text-mid);">🔍 Searching India Map...</div>';
+                dropdown.style.display = 'block';
+
+                try {
+                    // Using Photon API (better for India autocomplete)
+                    const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=20&lat=22.9734&lon=78.6569`);
+                    const data = await res.json();
+
+                    if (!data.features || data.features.length === 0) {
+                        dropdown.innerHTML = '<div style="padding:20px; text-align:center; font-size:12px; color:var(--text-mid);">No locations found</div>';
+                        return;
+                    }
+
+                    // STRICT INDIA FILTER
+                    const indiaResults = data.features.filter(f => {
+                        const c = (f.properties.country || '').toLowerCase();
+                        const cc = (f.properties.countrycode || '').toLowerCase();
+                        return c === 'india' || cc === 'in';
+                    });
+
+                    if (indiaResults.length === 0) {
+                        dropdown.innerHTML = '<div style="padding:20px; text-align:center; font-size:12px; color:var(--text-mid);">No locations found within India</div>';
+                        return;
+                    }
+
+                    dropdown.innerHTML = '<div style="padding:10px 16px; font-size:10px; font-weight:800; color:var(--green-mid); background:#f8fdfa;">SEARCH RESULTS (INDIA ONLY)</div>';
+                    indiaResults.forEach(feature => {
+                        const p = feature.properties;
+                        const coords = feature.geometry.coordinates; // [lng, lat]
+
+                        const name = p.name || '';
+                        const city = p.city || p.state || '';
+                        const street = p.street || '';
+
+                        // Format a nice display name
+                        const parts = [name, street, city].filter(x => x && x.length > 0);
+                        const display = parts.join(', ');
+                        const sub = [p.state, p.country].filter(x => x && x !== city).join(', ');
+
+                        if (display.length < 3) return; // Skip empty results
+
+                        const opt = document.createElement('div');
+                        opt.className = 'addr-option';
+                        opt.innerHTML = `
+                            <div class="title">🗺️ ${display}</div>
+                            <div class="sub">${sub}</div>
+                        `;
+                        opt.onclick = () => selectAddress({
+                            display_name: display + (sub ? ', ' + sub : ''),
+                            lat: coords[1],
+                            lon: coords[0]
+                        });
+                        dropdown.appendChild(opt);
+                    });
+                } catch (e) {
+                    console.error('Search failed', e);
+                    dropdown.style.display = 'none';
+                }
+            }, 400);
+        }
+
+        function selectAddress(loc) {
+            const input = document.getElementById('pickup-location');
+            input.value = loc.display_name;
+            selectedLat = parseFloat(loc.lat);
+            selectedLng = parseFloat(loc.lon || loc.lng);
+            document.getElementById('addrDropdown').style.display = 'none';
+
+            // Highlight the selection
+            input.style.borderColor = 'var(--green-bright)';
+            setTimeout(() => input.style.borderColor = 'rgba(76, 175, 80, 0.3)', 1000);
+
+            if (loc.isSaved) {
+                showToast('📍', 'Saved address selected');
+            } else {
+                showToast('📍', 'Location selected');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.location-field-row') && !e.target.closest('#editAddrBtn')) {
+                document.getElementById('addrDropdown').style.display = 'none';
+            }
+        });
+
+        // ======= MODAL =======
+        function openModal() {
+            if (cart.length === 0) return;
+            const total = cart.reduce((s, i) => s + i.kg, 0);
+            const rows = cart.map(i =>
+                `<div class="modal-item-row">
+      <span>${ICONS[i.name] || '♻️'} ${i.name}</span>
+      <span>${i.kg} kg</span>
+    </div>`
+            ).join('');
+            document.getElementById('modalItems').innerHTML =
+                rows +
+                `<div class="modal-total-row">
+      <span>Total</span>
+      <span>${total.toFixed(1)} kg</span>
+    </div>`;
+            document.getElementById('modalOverlay').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        async function confirmRequest() {
+            if (!token) {
+                showToast('⚠️', 'Please login first!');
+                setTimeout(() => { window.location.href = 'rebin_profile.html'; }, 1500);
+                return;
+            }
+
+            const pickupDate = document.getElementById('pickup-date').value;
+            const pickupTime = document.getElementById('pickup-time').value;
+            const locationAddress = document.getElementById('pickup-location').value;
+
+            if (!locationAddress) {
+                showToast('⚠️', 'Please choose a location!');
+                return;
+            }
+
+            closeModal();
+            showToast('🚛', 'Creating pickup request...');
+
+            try {
+                // AUTO-SAVE LOGIC: If this is a new address search, save it to profile
+                const existingUser = JSON.parse(localStorage.getItem('rebin_user') || '{}');
+                const isAlreadySaved = existingUser.addresses && existingUser.addresses.some(a =>
+                    locationAddress.includes(a.city) && locationAddress.includes(a.street)
+                );
+
+                if (!isAlreadySaved && selectedLat) {
+                    // Try to extract city/street for the profile save
+                    const parts = locationAddress.split(',');
+                    const city = parts.find(p => p.trim().length > 3) || 'Unknown';
+                    const street = parts[0] || 'Unknown';
+
+                    fetch(`${API}/address`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'authorization': token },
+                        body: JSON.stringify({ street, city, pincode: 'Manual', is_default: false })
+                    }).catch(e => console.log('Auto-save addr failed', e));
+                }
+
+                const items = cart.map(i => ({ name: i.name, kg: i.kg }));
+                const r = await fetch(`${API}/pickup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'authorization': token },
+                    body: JSON.stringify({
+                        items,
+                        pickup_date: pickupDate,
+                        pickup_time: pickupTime,
+                        pickup_location: locationAddress,
+                        locationAddress, // redundancy for backend
+                        lat: selectedLat,
+                        lng: selectedLng
+                    })
+                });
+                const data = await r.json();
+                if (data.success) {
+                    cart = [];
+                    nextId = 1;
+                    saveState();
+                    showToast('✅', `Pickup created! Redirecting...`);
+                    setTimeout(() => {
+                        window.location.href = `place-request.html?pickupId=${data.pickupId}`;
+                    }, 1500);
+                } else {
+                    showToast('❌', data.error || 'Failed to create pickup');
+                }
+            } catch (err) {
+                showToast('❌', 'Cannot connect to server');
+            }
+        }
+
+        // ======= View Price List =======
+        function togglePriceList() {
+            const el = document.getElementById('priceList');
+            const isHidden = el.style.display === 'none' || el.style.display === '';
+            el.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                document.getElementById('priceSearch').value = '';
+                filterPrices();
+            }
+        }
+        function filterPrices() {
+            const query = document.getElementById('priceSearch').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('#priceGrid .price-card');
+            cards.forEach(card => {
+                const material = (card.getAttribute('data-material') || '').toLowerCase();
+                const text = card.textContent.toLowerCase();
+                if (!query || material.includes(query) || text.includes(query)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+        document.getElementById('modalOverlay').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
+        function showToast(icon, msg) {
+            document.getElementById('toastIcon').textContent = icon;
+            document.getElementById('toastMsg').textContent = msg;
+            const t = document.getElementById('toast'); t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2800);
+        }
+
+        // Schedule Logic
+        function updateSchedule() {
+            const d = document.getElementById('pickup-date').value;
+            const t = document.getElementById('pickup-time').value;
+            const bar = document.getElementById('schedule-bar');
+            const txt = document.getElementById('schedule-text');
+            if (d && t) {
+                const dt = new Date(d + 'T' + t);
+                txt.textContent = 'Scheduled: ' + dt.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' }) + ' at ' + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                bar.style.display = 'flex';
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+        document.getElementById('pickup-date').addEventListener('change', updateSchedule);
+        document.getElementById('pickup-time').addEventListener('change', updateSchedule);
+        const now = new Date();
+        document.getElementById('pickup-date').value = now.toISOString().split('T')[0];
+        document.getElementById('pickup-time').value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+        updateSchedule();
+
+        renderCart();
+    </script>
+
+
+
+
+    <script src="global-header.js"></script>
+
+</body>
+
+</html>

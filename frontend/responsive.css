@@ -1,0 +1,667 @@
+/*
+  ══════════════════════════════════════════════
+  ReBin – Global Responsive & UX Enhancement CSS
+  ══════════════════════════════════════════════
+  Import this file on every page via:
+  <link rel="stylesheet" href="responsive.css" />
+*/
+
+/* ── TOUCH IMPROVEMENTS ── */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+a,
+[role="button"],
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+/* ── SMOOTH SCROLLING ── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── NO HORIZONTAL OVERFLOW ── */
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ═══════════════════════════════════════
+   SHARED NAV HAMBURGER OVERLAY PATTERN
+   (for pages using nav-links + hamburger)
+═══════════════════════════════════════ */
+
+/* Overlay when mobile nav is open */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 150;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+.nav-overlay.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Hamburger animation when open */
+.hamburger.open span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ═══════════════════════════
+   TABLET BREAKPOINT: 768px
+═══════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Generic card spacing */
+  .card,
+  .item-card,
+  .request-card,
+  .scheduled-card,
+  .reward-card {
+    padding: 14px !important;
+  }
+
+  /* Typography fluid scaling */
+  .brand-title {
+    font-size: clamp(32px, 8vw, 48px) !important;
+  }
+
+  .section-title {
+    font-size: clamp(16px, 4vw, 22px) !important;
+  }
+
+  /* Modal improvements for tablet */
+  .modal-box {
+    max-width: 96vw !important;
+    margin: 0 8px;
+  }
+
+  /* Profile page: stacked layout */
+  .main[class] {
+    /* profile main grid */
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ═══════════════════════════
+   MOBILE BREAKPOINT: 480px
+═══════════════════════════ */
+@media (max-width: 480px) {
+
+  /* Nav logo size */
+  .nav-logo {
+    font-size: 18px !important;
+  }
+
+  /* Reduce button & pill padding for small screens */
+  .nav-cart-btn {
+    padding: 6px 10px !important;
+    font-size: 10px !important;
+  }
+
+  .nav-avatar {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 12px !important;
+  }
+
+  /* Minimum touch target size (44x44) */
+  .btn,
+  button,
+  .nav-item,
+  .redeem-btn,
+  .qty-btn {
+    min-height: 40px;
+  }
+
+  /* Toast should be wider on very small screens */
+  .toast {
+    width: 92vw !important;
+    text-align: center;
+    font-size: 13px !important;
+    padding: 12px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  /* Filter row chips */
+  .filter-row {
+    gap: 6px !important;
+  }
+
+  .filter-btn {
+    padding: 6px 12px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   ABOUT PAGE SPECIFIC
+═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .flow {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 600px) {
+
+  /* About page */
+  .flow {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .flow::before {
+    display: none !important;
+    /* hide the connecting line on mobile */
+  }
+
+  .illus-band {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 20px !important;
+    padding: 24px !important;
+  }
+
+  .brand-title {
+    font-size: clamp(28px, 9vw, 44px) !important;
+  }
+
+  .main.about-main {
+    padding: 28px 16px 50px !important;
+  }
+
+  .hero-desc {
+    font-size: 14px !important;
+  }
+
+  .tagline {
+    font-size: 18px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .flow {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   ABOUT NAV – add hamburger responsiveness
+═══════════════════════════════════════ */
+@media (max-width: 640px) {
+  nav .hamburger {
+    display: flex !important;
+  }
+
+  nav .nav-links {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    background: var(--green-deep, #1a4d2e);
+    flex-direction: column;
+    padding: 20px 18px;
+    gap: 16px;
+    width: 220px;
+    min-height: 100vh;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.35);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+    align-items: flex-start;
+    border-left: 2px solid rgba(76, 175, 80, 0.2);
+    z-index: 200;
+  }
+
+  nav .nav-links.open {
+    transform: translateX(0) !important;
+  }
+
+  nav .hamburger {
+    display: flex;
+    z-index: 210;
+  }
+
+  /* Ensure nav links text is legible on mobile dropdown */
+  nav .nav-links a {
+    font-size: 13px !important;
+    padding: 6px 0 !important;
+    width: 100% !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+    white-space: nowrap;
+  }
+
+  nav .nav-links .nav-cart-btn {
+    margin-top: 8px;
+    border-radius: 10px !important;
+    width: 100% !important;
+    text-align: center !important;
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+  }
+
+  nav .nav-links .nav-avatar {
+    margin-top: 4px;
+  }
+}
+
+/* ══════════════════════════════════════
+   PROFILE PAGE NAV
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .navbar .nav-links {
+    display: none !important;
+  }
+
+  .navbar .nav-warehouse-btn {
+    display: none !important;
+  }
+
+  .navbar .nav-cart {
+    display: none !important;
+  }
+
+  .navbar {
+    padding: 0 16px !important;
+  }
+
+  .nav-center {
+    position: static !important;
+    transform: none !important;
+  }
+
+  /* Main layout stacked */
+  .main {
+    grid-template-columns: 1fr !important;
+    padding: 16px 12px 60px !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   COLLECTOR-HOME PAGE
+═══════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  /* Card action row */
+  .action-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .action-row .btn {
+    width: 100% !important;
+  }
+
+  /* Meta grid stacked */
+  .card-meta {
+    grid-template-columns: 1fr !important;
+  }
+
+  header {
+    padding: 0 14px !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   LEADERBOARD PAGE RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 860px) {
+  #leaderboardPage {
+    padding: clamp(16px, 3vw, 40px) clamp(10px, 3vw, 40px) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .lb-stats {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .podium-section {
+    gap: 8px !important;
+  }
+
+  .lb-title-main {
+    font-size: clamp(36px, 12vw, 72px) !important;
+    letter-spacing: 4px !important;
+  }
+
+  .lb-title-sub {
+    font-size: clamp(24px, 8vw, 48px) !important;
+    letter-spacing: 6px !important;
+  }
+
+  .lb-row {
+    padding: 10px 12px !important;
+  }
+
+  .lb-bar-wrap {
+    display: none !important;
+    /* hide progress bars on mobile for space */
+  }
+
+  .nav-btn-row a {
+    font-size: 12px !important;
+    padding: 10px 16px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .lb-stats {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .podium-section {
+    gap: 4px !important;
+  }
+
+  .rank-1 .podium-avatar {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  .rank-2 .podium-avatar {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .rank-3 .podium-avatar {
+    width: 48px !important;
+    height: 48px !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   INDEX (HOME) PAGE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .main-wrapper {
+    grid-template-columns: 1fr !important;
+  }
+
+  .info-panel {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .cart-panel {
+    padding: 16px 12px 24px !important;
+  }
+
+  .add-item-row {
+    flex-direction: column !important;
+  }
+
+  .add-weight-input {
+    flex: 1 !important;
+  }
+
+  .add-btn {
+    width: 100% !important;
+  }
+
+  .total-bar {
+    flex-direction: column !important;
+    gap: 6px !important;
+    text-align: center !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   WAREHOUSE PAGE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .split {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto 1fr !important;
+    overflow-y: auto !important;
+    height: auto !important;
+    min-height: 100vh;
+  }
+
+  .scene-wrap {
+    min-height: 40vh !important;
+    padding: 20px !important;
+  }
+
+  .panel-wrap {
+    border-left: none !important;
+    border-top: 2px solid rgba(22, 163, 74, 0.12) !important;
+  }
+
+  html,
+  body {
+    overflow: auto !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    padding: 0 14px !important;
+  }
+
+  .nav-badge {
+    display: none !important;
+  }
+
+  .panel-header {
+    padding: 20px !important;
+  }
+
+  .panel-body {
+    padding: 16px !important;
+    gap: 14px !important;
+  }
+
+  .upload-zone {
+    padding: 24px 16px !important;
+  }
+
+  .scene-wrap {
+    min-height: 35vh !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   PROFILE LOGIN CARD RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 500px) {
+  .login-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 16px !important;
+    padding: 28px 20px !important;
+  }
+
+  #login-screen {
+    padding: 60px 12px 30px !important;
+    gap: 0 !important;
+    align-items: flex-end !important;
+  }
+
+  .tagline {
+    font-size: 14px !important;
+    padding: 8px 16px !important;
+    white-space: normal !important;
+    text-align: center !important;
+    top: 10px !important;
+    border-radius: 20px !important;
+    width: calc(100% - 24px) !important;
+    left: 12px !important;
+    transform: none !important;
+  }
+
+  .login-logo {
+    font-size: 26px !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   POINTS PAGE EXTRA
+══════════════════════════════════════ */
+@media (max-width: 960px) {
+  .main-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .left-col {
+    position: static !important;
+  }
+
+  .rewards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .rewards-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .reward-img-wrap {
+    height: 110px !important;
+  }
+
+  .pts-actions {
+    flex-direction: row !important;
+  }
+
+  .pts-actions a {
+    flex: 1 !important;
+    padding: 11px 10px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .rewards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pts-actions {
+    flex-direction: column !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   PLACE REQUEST PAGE
+══════════════════════════════════════ */
+@media (max-width: 760px) {
+  .pr-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pr-map-panel {
+    height: 300px !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   COLLECTOR PROFILE / HISTORY PAGES
+══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .cp-stats {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .cp-header {
+    padding: 20px 14px !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   CONNECT PAGE
+══════════════════════════════════════ */
+@media (max-width: 700px) {
+  .connect-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   GLOBAL IMAGE RESPONSIVENESS
+══════════════════════════════════════ */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+svg {
+  max-width: 100%;
+}
+
+/* ══════════════════════════════════════
+   SMOOTH TRANSITIONS FOR INTERACTIVE
+══════════════════════════════════════ */
+.request-card,
+.scheduled-card,
+.reward-card,
+.lb-row,
+.item-card,
+.podium-card,
+.lb-stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease !important;
+  will-change: transform;
+}
+
+/* ══════════════════════════════════════
+   INPUT FOCUS STYLES
+══════════════════════════════════════ */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25);
+  transition: box-shadow 0.2s ease;
+}
+
+/* ══════════════════════════════════════
+   SCROLLBAR STYLING (WEBKIT)
+══════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(76, 175, 80, 0.35);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(76, 175, 80, 0.6);
+}

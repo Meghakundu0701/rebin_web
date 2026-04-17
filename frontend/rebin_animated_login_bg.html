@@ -1,0 +1,248 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap');
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Removes white space from top/bottom and fills the screen */
+  body,
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #334155;
+    /* Matches road color to prevent flickering */
+  }
+
+  .scene {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: #c8e6c0;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  /* Sky gradient */
+  .sky {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 75%;
+    background: linear-gradient(180deg, #a8d5a2 0%, #dcfce7 100%);
+    z-index: 1;
+  }
+
+  /* Buildings */
+  .bldg {
+    position: absolute;
+    bottom: 25%;
+    /* Aligned with the grass top */
+    background: #2d6a47;
+    border-radius: 4px 4px 0 0;
+    z-index: 2;
+  }
+
+  .bldg-win {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #fef08a;
+    border-radius: 1px;
+    animation: winBlink 3s ease-in-out infinite;
+  }
+
+  @keyframes winBlink {
+
+    0%,
+    90%,
+    100% {
+      opacity: 1;
+    }
+
+    92%,
+    98% {
+      opacity: 0.3;
+    }
+  }
+
+  .b1 {
+    left: 5%;
+    width: 60px;
+    height: 120px;
+  }
+
+  .b2 {
+    left: 15%;
+    width: 40px;
+    height: 80px;
+    background: #3d7a58;
+  }
+
+  .b3 {
+    left: 25%;
+    width: 50px;
+    height: 140px;
+    background: #1e4f32;
+  }
+
+  /* Trees/Bushes */
+  .tree {
+    position: absolute;
+    bottom: 25%;
+    z-index: 3;
+  }
+
+  .leaves {
+    width: 40px;
+    height: 40px;
+    background: #16a34a;
+    border-radius: 50%;
+    margin-bottom: -5px;
+  }
+
+  /* Ground/Grass */
+  .ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 25%;
+    background: #4ade80;
+    z-index: 4;
+  }
+
+  /* Road - Positioned at the very bottom */
+  .road {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: #334155;
+    border-top: 5px solid #475569;
+    z-index: 5;
+  }
+
+  /* Yellow Lines - Centered in the middle of the road height */
+  .road-line-container {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 200%;
+    /* Extra width for infinite loop */
+    height: 6px;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-around;
+    animation: roadScroll 3s linear infinite;
+  }
+
+  .dash {
+    width: 60px;
+    height: 6px;
+    background: #fde047;
+    border-radius: 3px;
+  }
+
+  @keyframes roadScroll {
+    from {
+      transform: translate(0, -50%);
+    }
+
+    to {
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  /* THE TRUCK */
+  .truck-wrap {
+    position: absolute;
+    bottom: 30px;
+    /* Sitting on the road */
+    z-index: 10;
+    animation: truckDrive 10s linear infinite;
+  }
+
+  @keyframes truckDrive {
+    from {
+      left: -200px;
+    }
+
+    to {
+      left: 100vw;
+    }
+  }
+
+  /* Tagline */
+  .tagline {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 24px;
+    border-radius: 40px;
+    z-index: 20;
+    color: #166534;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+    white-space: nowrap;
+  }
+</style>
+
+<div class="scene">
+  <div class="sky"></div>
+  <div class="tagline">"Because Every Waste Deserves a Second Life."</div>
+
+  <div class="bldg b1">
+    <div class="bldg-win" style="top:15px;left:15px;"></div>
+  </div>
+  <div class="bldg b2">
+    <div class="bldg-win" style="top:20px;left:10px;"></div>
+  </div>
+  <div class="bldg b3">
+    <div class="bldg-win" style="top:25px;left:20px;"></div>
+  </div>
+
+  <div class="tree" style="left:40%;">
+    <div class="leaves"></div>
+  </div>
+  <div class="tree" style="left:70%;">
+    <div class="leaves"></div>
+  </div>
+
+  <div class="ground"></div>
+
+  <div class="road">
+    <div class="road-line-container">
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+      <div class="dash"></div>
+    </div>
+  </div>
+
+  <div class="truck-wrap">
+    <svg width="150" height="75" viewBox="0 0 160 80">
+      <rect x="10" y="10" width="100" height="50" rx="5" fill="#166534" />
+      <rect x="110" y="25" width="40" height="35" rx="5" fill="#14532d" />
+      <rect x="115" y="30" width="22" height="15" rx="2" fill="#a8e6cf" />
+      <text x="60" y="45" text-anchor="middle" font-size="20">♻️</text>
+      <circle cx="35" cy="65" r="12" fill="#1e293b" />
+      <circle cx="125" cy="65" r="12" fill="#1e293b" />
+    </svg>
+  </div>
+</div>

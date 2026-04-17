@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReBin – Smart Warehouse</title>
+    <meta name="description"
+        content="ReBin Warehouse – AI-powered waste categorisation. Upload an image and let our ML model identify and sort your waste." />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="responsive.css" />
+    <style>
+        /* ══════════ RESET & BASE ══════════ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --green: #16a34a;
+            --green-light: #4ade80;
+            --green-dark: #14532d;
+            --amber: #f59e0b;
+            --amber-dark: #d97706;
+            --sky-top: #6ec6f5;
+            --sky-bot: #c8efc2;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+            background: #0a1f12;
+        }
+
+        /* ══════════ NAVBAR ══════════ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            height: 58px;
+            background: rgba(10, 31, 18, 0.95);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.15);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--green-light);
+        }
+
+        .nav-logo span {
+            color: #fff;
+        }
+
+        .nav-badge {
+            background: linear-gradient(135deg, var(--amber), var(--amber-dark));
+            color: #fff;
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #86efac;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: .8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            transition: all .2s;
+        }
+
+        .nav-back:hover {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--green-light);
+        }
+
+        /* ══════════ MAIN SPLIT LAYOUT ══════════ */
+        .split {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            height: 100vh;
+            padding-top: 58px;
+        }
+
+        @media (max-width: 900px) {
+            .split {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                overflow-y: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .scene-wrap {
+                min-height: 45vw;
+                max-height: 55vh;
+            }
+
+            .panel-wrap {
+                border-left: none;
+                border-top: 2px solid rgba(22, 163, 74, 0.12);
+            }
+
+            html,
+            body {
+                overflow: auto;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .split {
+                grid-template-rows: auto 1fr;
+            }
+
+            .scene-wrap {
+                min-height: 38vw;
+                padding: 12px;
+            }
+
+            .navbar {
+                padding: 0 14px;
+            }
+
+            .nav-badge {
+                display: none;
+            }
+
+            .nav-logo {
+                font-size: 20px;
+            }
+
+            .panel-header {
+                padding: 20px 18px;
+            }
+
+            .panel-body {
+                padding: 16px;
+                gap: 14px;
+            }
+
+            .upload-zone {
+                padding: 24px 14px;
+            }
+
+            .upload-icon {
+                font-size: 32px;
+            }
+
+            .warehouse-container {
+                width: min(88%, 340px);
+            }
+        }
+
+        /* ══════════ LEFT – WAREHOUSE SCENE ══════════ */
+        .scene-wrap {
+            background: linear-gradient(160deg, #071a0e 0%, #0a2215 60%, #091a10 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            padding: 16px;
+        }
+
+        /* Scene title */
+        .scene-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            color: rgba(74, 222, 128, 0.45);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            white-space: nowrap;
+        }
+
+        /* Warehouse SVG-style box — fills available space */
+        .warehouse-container {
+            width: min(90%, 460px);
+            aspect-ratio: 460 / 300;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* Warehouse building */
+        .wh-building {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 78%;
+            background: linear-gradient(180deg, #0d2d1a 0%, #0a2215 100%);
+            border: 1.5px solid rgba(74, 222, 128, 0.18);
+            border-radius: 10px 10px 6px 6px;
+        }
+
+        /* Roof */
+        .wh-roof {
+            position: absolute;
+            top: -13%;
+            left: -2%;
+            right: -2%;
+            height: 18%;
+            background: linear-gradient(180deg, #0f3320 0%, #0d2d1a 100%);
+            border: 1.5px solid rgba(74, 222, 128, 0.18);
+            clip-path: polygon(0% 100%, 3% 0%, 97% 0%, 100% 100%);
+        }
+
+        /* Warehouse label on roof */
+        .wh-label {
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(8px, 1.2vw, 12px);
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: rgba(74, 222, 128, 0.6);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* Conveyor belt — top 30% of building */
+        .conveyor {
+            position: absolute;
+            top: 22%;
+            left: 3%;
+            right: 3%;
+            height: 7%;
+            background: linear-gradient(180deg, #1a3a24, #122b1a);
+            border-radius: 9px;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            overflow: hidden;
+        }
+
+        .conveyor::after {
+            content: '';
+            position: absolute;
+            top: 30%;
+            bottom: 30%;
+            left: 0;
+            right: 0;
+            background: repeating-linear-gradient(90deg,
+                    transparent, transparent 22px,
+                    rgba(74, 222, 128, 0.15) 22px, rgba(74, 222, 128, 0.15) 24px);
+            animation: beltMove 1s linear infinite;
+        }
+
+        @keyframes beltMove {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 24px 0;
+            }
+        }
+
+        /* Sorting bins row */
+        .bins-row {
+            position: absolute;
+            bottom: 4%;
+            left: 3%;
+            right: 3%;
+            height: 55%;
+            display: flex;
+            gap: 2%;
+        }
+
+        .bin {
+            flex: 1;
+            border-radius: 6px 6px 8px 8px;
+            border: 1.5px solid;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 8%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bin-paper {
+            background: linear-gradient(180deg, rgba(234, 179, 8, .08), rgba(234, 179, 8, .18));
+            border-color: rgba(234, 179, 8, .45);
+        }
+
+        .bin-plastic {
+            background: linear-gradient(180deg, rgba(59, 130, 246, .06), rgba(59, 130, 246, .14));
+            border-color: rgba(59, 130, 246, .35);
+        }
+
+        .bin-organic {
+            background: linear-gradient(180deg, rgba(34, 197, 94, .06), rgba(34, 197, 94, .14));
+            border-color: rgba(34, 197, 94, .35);
+        }
+
+        .bin-metal {
+            background: linear-gradient(180deg, rgba(148, 163, 184, .06), rgba(148, 163, 184, .12));
+            border-color: rgba(148, 163, 184, .25);
+        }
+
+        .bin-icon {
+            font-size: clamp(14px, 2.5vw, 22px);
+            margin-bottom: 4px;
+        }
+
+        .bin-name {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(7px, 1vw, 10px);
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .bin-paper .bin-name {
+            color: rgba(234, 179, 8, .8);
+        }
+
+        .bin-plastic .bin-name {
+            color: rgba(96, 165, 250, .8);
+        }
+
+        .bin-organic .bin-name {
+            color: rgba(74, 222, 128, .8);
+        }
+
+        .bin-metal .bin-name {
+            color: rgba(148, 163, 184, .7);
+        }
+
+        .bin-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .bin-paper .bin-fill {
+            background: rgba(234, 179, 8, .12);
+            height: 35%;
+        }
+
+        .bin-plastic .bin-fill {
+            background: rgba(59, 130, 246, .10);
+            height: 20%;
+        }
+
+        .bin-organic .bin-fill {
+            background: rgba(34, 197, 94, .10);
+            height: 25%;
+        }
+
+        .bin-metal .bin-fill {
+            background: rgba(148, 163, 184, .08);
+            height: 15%;
+        }
+
+        /* Scan beam */
+        .scan-beam {
+            position: absolute;
+            top: 17%;
+            left: 3%;
+            width: 22%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, .8), transparent);
+            animation: scanPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes scanPulse {
+
+            0%,
+            30%,
+            100% {
+                opacity: 0;
+            }
+
+            42%,
+            52% {
+                opacity: 1;
+            }
+        }
+
+        /* Package — uses % keyframes so it scales with container */
+        .package {
+            position: absolute;
+            top: 14%;
+            width: 6%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 4px;
+            border: 1.5px solid rgba(255, 255, 255, .25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(8px, 1.5vw, 14px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, .5);
+            animation: packageJourney 4s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        /* 
+          Paper bin centre ≈ 3% + (94%/4)/2 ≈ 3% + 11.75% ≈ 14.75% from building-left 
+          But package position is relative to .wh-building, so:
+          Paper bin left edge = 3%, width = ~22.5%, centre = ~14.25%
+          Package width = 6%, so left of package to centre = 14.25% - 3% = 11.25%
+          Start right side = 91%
+        */
+        @keyframes packageJourney {
+            0% {
+                left: 91%;
+                top: 14%;
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+
+            42% {
+                left: 11%;
+                top: 14%;
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+
+            52% {
+                left: 11%;
+                top: 30%;
+                opacity: 1;
+                transform: scale(.9) rotate(-5deg);
+            }
+
+            62% {
+                left: 11%;
+                top: 50%;
+                opacity: .6;
+                transform: scale(.7) rotate(10deg);
+            }
+
+            68% {
+                left: 11%;
+                top: 65%;
+                opacity: 0;
+                transform: scale(.4);
+            }
+
+            69% {
+                left: 91%;
+                top: 14%;
+                opacity: 0;
+                transform: scale(.4);
+            }
+
+            78% {
+                left: 91%;
+                top: 14%;
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            100% {
+                left: 91%;
+                top: 14%;
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        /* Paper bin glow on landing */
+        .bin-paper {
+            animation: binGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes binGlow {
+
+            0%,
+            52%,
+            100% {
+                box-shadow: none;
+            }
+
+            62%,
+            68% {
+                box-shadow: 0 0 16px rgba(234, 179, 8, .5), inset 0 0 8px rgba(234, 179, 8, .1);
+            }
+        }
+
+        /* Live stats strip */
+        .stats-strip {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-pill {
+            background: rgba(10, 31, 18, 0.7);
+            border: 1px solid rgba(74, 222, 128, 0.15);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-family: 'Syne', sans-serif;
+            font-size: 9px;
+            font-weight: 800;
+            color: rgba(74, 222, 128, 0.7);
+            letter-spacing: .8px;
+            white-space: nowrap;
+        }
+
+        /* ══════════ RIGHT – CLASSIFIER PANEL ══════════ */
+        .panel-wrap {
+            background: #f0fdf4;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            border-left: 2px solid rgba(22, 163, 74, 0.12);
+            min-width: 0;
+        }
+
+        .panel-wrap::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .panel-wrap::-webkit-scrollbar-thumb {
+            background: #bbf7d0;
+            border-radius: 99px;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #166534, #14532d);
+            padding: 28px 28px 22px;
+            color: white;
+        }
+
+        .panel-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .panel-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .panel-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+
+        .ml-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(245, 158, 11, 0.25);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fbbf24;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 10px;
+            letter-spacing: .8px;
+        }
+
+        .panel-body {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2.5px dashed #86efac;
+            border-radius: 20px;
+            background: white;
+            padding: 36px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .25s;
+            position: relative;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.drag-over {
+            border-color: var(--green);
+            background: #f0fdf4;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(22, 163, 74, 0.12);
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-icon {
+            font-size: 44px;
+            margin-bottom: 12px;
+            animation: uploadBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes uploadBounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .upload-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: #166534;
+            margin-bottom: 6px;
+        }
+
+        .upload-sub {
+            font-size: 12px;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+
+        .upload-formats {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 14px;
+        }
+
+        .fmt-chip {
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid #bbf7d0;
+            letter-spacing: .5px;
+        }
+
+        /* Preview */
+        #preview-area {
+            display: none;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            background: #0a1f12;
+            aspect-ratio: 4/3;
+        }
+
+        #preview-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-change {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: none;
+            font-family: 'Nunito', sans-serif;
+            transition: background .2s;
+        }
+
+        .preview-change:hover {
+            background: rgba(0, 0, 0, 0.85);
+        }
+
+        .active-bin {
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 15px #00ff88;
+        }
+
+        /* Analyse Button */
+        #analyse-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--green), #15803d);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #analyse-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(22, 163, 74, 0.35);
+        }
+
+        #analyse-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        /* Result Card */
+        #result-card {
+            display: none;
+            background: white;
+            border-radius: 18px;
+            border: 1.5px solid #bbf7d0;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            animation: slideUp .4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .result-header {
+            background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #dcfce7;
+        }
+
+        .result-emoji {
+            font-size: 34px;
+            animation: resultBounce .6s ease;
+        }
+
+        @keyframes resultBounce {
+            0% {
+                transform: scale(0);
+            }
+
+            70% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .result-label-wrap {
+            flex: 1;
+        }
+
+        .result-cat {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: #166534;
+        }
+
+        .result-conf {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .conf-bar-bg {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 99px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .conf-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--green-light));
+            border-radius: 99px;
+            transition: width 1s ease;
+        }
+
+        .result-body {
+            padding: 16px 20px;
+        }
+
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .result-tag {
+            background: #f0fdf4;
+            color: #15803d;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #bbf7d0;
+        }
+
+        .result-desc {
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .action-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .action-btn {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-family: 'Nunito', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .ab-schedule {
+            background: linear-gradient(135deg, var(--green), #15803d);
+            color: white;
+        }
+
+        .ab-schedule:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        }
+
+        .ab-retry {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .ab-retry:hover {
+            background: #e5e7eb;
+        }
+
+        /* History */
+        .hist-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            color: #9ca3af;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hist-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .hist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1px solid #e5e7eb;
+            font-size: 12px;
+        }
+
+        .hist-ico {
+            font-size: 20px;
+        }
+
+        .hist-cat {
+            font-weight: 700;
+            color: #111;
+            flex: 1;
+        }
+
+        .hist-time {
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        /* Loading state */
+        .analysing-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            background: rgba(10, 31, 18, 0.7);
+            backdrop-filter: blur(6px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .analysing-overlay.show {
+            display: flex;
+        }
+
+        .analyse-spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(74, 222, 128, 0.2);
+            border-top-color: var(--green-light);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .analyse-text {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: #4ade80;
+        }
+
+        .analyse-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #16a34a;
+            color: white;
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+            z-index: 400;
+            transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── LOADING OVERLAY ── -->
+    <div class="analysing-overlay" id="analyse-overlay">
+        <div class="analyse-spinner"></div>
+        <div class="analyse-text">Analysing Waste...</div>
+        <div class="analyse-sub">Our ML model is identifying the category<br>and optimal disposal method</div>
+    </div>
+
+    <!-- ── TOAST ── -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ══════════ NAVBAR ══════════ -->
+    <nav class="navbar">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div class="nav-logo">Re<span>Bin</span></div>
+            <span class="nav-badge">🏭 WAREHOUSE</span>
+        </div>
+        <div class="nav-right">
+            <a href="rebin_profile.html" class="nav-back">← Back to Profile</a>
+        </div>
+    </nav>
+
+    <!-- ══════════ SPLIT LAYOUT ══════════ -->
+    <div class="split">
+
+        <!-- ══════ LEFT – ANIMATED SCENE ══════ -->
+        <div class="scene-wrap">
+            <div class="scene-title">Smart Sorting · Live View</div>
+
+            <div class="warehouse-container">
+                <div class="wh-label">ReBin Warehouse</div>
+                <div class="wh-building">
+                    <div class="wh-roof"></div>
+                    <div class="conveyor"></div>
+                    <div class="scan-beam"></div>
+                    <div class="package">📦</div>
+                    <div class="bins-row">
+                        <div class="bin bin-paper">
+                            <div class="bin-fill"></div>
+                            <div class="bin-icon">📰</div>
+                            <div class="bin-name">Paper</div>
+                        </div>
+                        <div class="bin bin-plastic">
+                            <div class="bin-fill"></div>
+                            <div class="bin-icon">🧴</div>
+                            <div class="bin-name">Plastic</div>
+                        </div>
+                        <div class="bin bin-organic">
+                            <div class="bin-fill"></div>
+                            <div class="bin-icon">🌿</div>
+                            <div class="bin-name">Organic</div>
+                        </div>
+                        <div class="bin bin-metal">
+                            <div class="bin-fill"></div>
+                            <div class="bin-icon">🥫</div>
+                            <div class="bin-name">Metal</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-strip">
+                <div class="stat-pill">📦 <span id="stat-total">12,481</span> SORTED</div>
+                <div class="stat-pill">✅ 98.2% ACCURACY</div>
+                <div class="stat-pill">⚡ AI ACTIVE</div>
+            </div>
+        </div>
+
+        <!-- ══════ RIGHT – CLASSIFIER PANEL ══════ -->
+        <div class="panel-wrap">
+
+            <div class="panel-header">
+                <div class="panel-icon">🤖</div>
+                <div class="panel-title">AI Waste Classifier</div>
+                <div class="panel-sub">Upload a photo of your waste item and our machine learning model will instantly
+                    identify its category and recommend the optimal recycling method.</div>
+                <span class="ml-badge">⚡ ML MODEL READY</span>
+            </div>
+
+            <div class="panel-body">
+
+                <!-- Upload Zone -->
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)" />
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-title">Drop your waste image here</div>
+                    <div class="upload-sub">or click to browse from your device</div>
+                    <div class="upload-formats">
+                        <span class="fmt-chip">JPG</span>
+                        <span class="fmt-chip">PNG</span>
+                        <span class="fmt-chip">WEBP</span>
+                        <span class="fmt-chip">HEIC</span>
+                    </div>
+                </div>
+
+                <!-- Image Preview -->
+                <div id="preview-area">
+                    <img id="preview-img" src="" alt="Waste preview" />
+                    <button class="preview-change" onclick="resetUpload()">↺ Change Image</button>
+                </div>
+
+                <!-- Analyse Button -->
+                <button id="analyse-btn" disabled onclick="runAnalysis()">
+                    <span>🔍</span> Analyse Waste
+                </button>
+
+                <!-- Result Card -->
+                <div id="result-card">
+                    <div class="result-header">
+                        <div class="result-emoji" id="res-emoji">♻️</div>
+                        <div class="result-label-wrap">
+                            <div class="result-cat" id="res-cat">Identifying…</div>
+                            <div class="result-conf" id="res-conf">Confidence: —</div>
+                            <div class="conf-bar-bg">
+                                <div class="conf-bar-fill" id="res-bar" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-body">
+                        <div class="result-tags" id="res-tags"></div>
+                        <div class="result-desc" id="res-desc"></div>
+                        <div class="action-bar">
+                            <button class="action-btn ab-schedule" onclick="schedulePickup()">📅 Schedule
+                                Pickup</button>
+                            <button class="action-btn ab-retry" onclick="resetUpload()">🔄 Try Another</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scan History -->
+                <div>
+                    <div class="hist-title">🕒 Recent Scans</div>
+                    <div class="hist-list" id="hist-list">
+                        <div class="hist-item">
+                            <span class="hist-ico">📰</span>
+                            <span class="hist-cat">Paper / Newspaper</span>
+                            <span class="hist-time">2 min ago</span>
+                        </div>
+                        <div class="hist-item">
+                            <span class="hist-ico">🧴</span>
+                            <span class="hist-cat">Plastic Bottle</span>
+                            <span class="hist-time">18 min ago</span>
+                        </div>
+                        <div class="hist-item">
+                            <span class="hist-ico">🥫</span>
+                            <span class="hist-cat">Metal Can</span>
+                            <span class="hist-time">1 hr ago</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /panel-body -->
+        </div><!-- /panel-wrap -->
+
+    </div><!-- /split -->
+
+    <script>
+        /* ── Drag-and-Drop on upload zone ── */
+        const zone = document.getElementById('upload-zone');
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+        zone.addEventListener('drop', e => {
+            e.preventDefault(); zone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) processFile(file);
+        });
+
+        function handleFile(e) {
+            const file = e.target.files[0];
+            if (file) processFile(file);
+        }
+
+        function processFile(file) {
+            const reader = new FileReader();
+            reader.onload = ev => {
+                document.getElementById('preview-img').src = ev.target.result;
+                document.getElementById('preview-area').style.display = 'block';
+                document.getElementById('upload-zone').style.display = 'none';
+                document.getElementById('analyse-btn').disabled = false;
+                document.getElementById('result-card').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetUpload() {
+            document.getElementById('upload-zone').style.display = 'block';
+            document.getElementById('preview-area').style.display = 'none';
+            document.getElementById('result-card').style.display = 'none';
+            document.getElementById('analyse-btn').disabled = true;
+            document.getElementById('file-input').value = '';
+        }
+
+        /* ── Mock ML Categories (replace with real fetch to ML endpoint) ── */
+
+
+        async function runAnalysis() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showToast("⚠️ Please upload an image first");
+                return;
+            }
+
+            const overlay = document.getElementById('analyse-overlay');
+            overlay.classList.add('show');
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await fetch("https://ntsc-sanyo-there-international.trycloudflare.com/predict", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error("Server not responding");
+
+                const data = await res.json();
+
+                overlay.classList.remove('show');
+
+                // 🔥 CONNECT TO YOUR UI
+                showResult({
+                    emoji: data.emoji,
+                    cat: data.label,
+                    conf: data.confidence,
+                    tags: data.tags,
+                    desc: data.description
+                });
+
+                // Optional: highlight correct bin
+                highlightBin(data.label);
+
+            } catch (err) {
+                overlay.classList.remove('show');
+                console.error(err);
+                showToast("❌ Server error. Try again.");
+            }
+        }
+        function highlightBin(label) {
+            const bins = document.querySelectorAll('.bin-card');
+
+            bins.forEach(bin => {
+                bin.classList.remove('active-bin');
+
+                if (bin.innerText.toLowerCase().includes(label.toLowerCase())) {
+                    bin.classList.add('active-bin');
+                }
+            });
+        }
+        function showResult(r) {
+            document.getElementById('res-emoji').textContent = r.emoji;
+            document.getElementById('res-cat').textContent = r.cat;
+            document.getElementById('res-conf').textContent = `Confidence: ${r.conf}%`;
+            document.getElementById('res-bar').style.width = r.conf + '%';
+
+            const tagsEl = document.getElementById('res-tags');
+            tagsEl.innerHTML = r.tags.map(t => `<span class="result-tag">${t}</span>`).join('');
+            document.getElementById('res-desc').textContent = r.desc;
+
+            document.getElementById('result-card').style.display = 'block';
+
+            /* Add to history */
+            const histList = document.getElementById('hist-list');
+            const item = document.createElement('div');
+            item.className = 'hist-item';
+            item.innerHTML = `<span class="hist-ico">${r.emoji}</span><span class="hist-cat">${r.cat}</span><span class="hist-time">Just now</span>`;
+            histList.prepend(item);
+        }
+
+        function schedulePickup() {
+            showToast('📅 Pickup request sent! A collector will reach you shortly.');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3500);
+        }
+
+        /* ── Animate live stats ── */
+        setInterval(() => {
+            const el = document.getElementById('stat-total');
+            if (el) el.textContent = (parseInt(el.textContent.replace(',', '')) + Math.floor(Math.random() * 3 + 1)).toLocaleString();
+        }, 4000);
+    </script>
+
+</body>
+
+</html>
