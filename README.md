@@ -40,4 +40,4 @@ This project was built collaboratively by a dedicated team. Below are the core c
 - *Hosting:* Render.com
 
 ---
-Built to help the planet! ✨
+Built to help the planet! ✨🌎
