@@ -10,7 +10,7 @@ This project was built collaboratively by a dedicated team. Below are the core c
 - *Collector Portal:* Developed the Collector-facing website interfaces.
 
 ### 2. Nahida
-- *Frontend Development:* Contributed to the User Request Page, About Page, and User Profile interfaces.
+- *Frontend Development:* Contributed to the User Request Page and pickup request page, About Page, and User Profile interfaces.
 - *Backend Setup:* Handled the primary User Backend logic and authentication routing.
 - *Documentation:* Created the project Presentation (PPT).
 
