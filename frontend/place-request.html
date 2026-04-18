@@ -935,6 +935,14 @@
                 alert('Please fill all fields and upload an image');
                 return;
             }
+            if (parseFloat(w) > 1000) {
+                alert('Total weight cannot exceed 1000 kg');
+                return;
+            }
+            if (parseFloat(m) > 100000) {
+                alert('Total money paid cannot exceed 100000');
+                return;
+            }
 
             try {
                 const formData = new FormData();

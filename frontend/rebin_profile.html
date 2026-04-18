@@ -1902,6 +1902,21 @@
                         btn.textContent = 'CREATE ACCOUNT →';
                         return showAuthError('Please fill all fields.');
                     }
+                    if (!/^[a-zA-Z\s]+$/.test(name)) {
+                        btn.disabled = false;
+                        btn.textContent = 'CREATE ACCOUNT →';
+                        return showAuthError('Name must only contain alphabets.');
+                    }
+                    if (!/^[a-zA-Z]+$/.test(username)) {
+                        btn.disabled = false;
+                        btn.textContent = 'CREATE ACCOUNT →';
+                        return showAuthError('Username must only contain alphabets.');
+                    }
+                    if (!/^\d{10}$/.test(phone)) {
+                        btn.disabled = false;
+                        btn.textContent = 'CREATE ACCOUNT →';
+                        return showAuthError('Phone number must be exactly 10 digits.');
+                    }
 
                     const r = await fetch(`${API}/auth/register`, {
                         method: 'POST',

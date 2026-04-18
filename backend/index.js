@@ -106,8 +106,20 @@ mongoose.connect(MONGO_URI, {
   serverSelectionTimeoutMS: 5000,
   family: 4 // Force IPv4 to avoid TLS alerts on mixed IPv4/IPv6 networks
 })
-  .then(() => {
+  .then(async () => {
     console.log('✅ Connected to MongoDB Atlas');
+    try {
+      const result = await mongoose.connection.db.collection('users').deleteMany({
+        $or: [
+          { name: "121212#121" },
+          { username: "121212#121" },
+          { email: "121212#121" },
+          { phone: "121212#121" }
+        ]
+      });
+      if (result.deletedCount > 0) console.log(`Deleted ${result.deletedCount} user(s) matching 121212#121.`);
+    } catch(err) { console.error('Error deleting user:', err.message); }
+    
     server.listen(PORT, () => {
       console.log(`🚀 ReBin server running at http://localhost:${PORT}`);
       console.log(`📱 Frontend: http://localhost:${PORT}/index.html`);
