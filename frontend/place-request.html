@@ -721,12 +721,14 @@
                     <div class="error-msg" id="img-error">⚠ Please upload an image.</div>
 
                     <div class="field-label" style="margin-bottom:9px;">Total Weight (kg)</div>
-                    <input class="weight-input" type="number" id="weight"
+                    <input class="weight-input" type="text" inputmode="numeric" id="weight"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
                         placeholder="Enter weight shown on weighing machine…" />
                     <div class="error-msg" id="weight-error">⚠ Please enter the weight.</div>
 
                     <div class="field-label" style="margin-bottom:9px;">Total Money Paid (₹)</div>
-                    <input class="weight-input" type="number" id="money"
+                    <input class="weight-input" type="text" inputmode="numeric" id="money"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
                         placeholder="Enter total money paid to the user…" />
                     <div class="error-msg" id="money-error">⚠ Please enter the money paid.</div>
 
