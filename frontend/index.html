@@ -1242,7 +1242,7 @@
                 <div class="schedule-grid">
                     <div class="field-wrap">
                         <label>Pickup Date</label>
-                        <input type="date" id="pickup-date" />
+                        <input type="date" id="pickup-date" onfocus="this.min=new Date().toISOString().split('T')[0]" />
                     </div>
                     <div class="field-wrap">
                         <label>Pickup Time</label>
@@ -1651,6 +1651,21 @@
         // ======= MODAL =======
         function openModal() {
             if (cart.length === 0) return;
+
+            const pickupDate = document.getElementById('pickup-date').value;
+            const pickupTime = document.getElementById('pickup-time').value;
+
+            if (pickupDate && pickupTime) {
+                const selectedDateTime = new Date(`${pickupDate}T${pickupTime}`);
+                if (selectedDateTime < new Date()) {
+                    showToast('⚠️', 'Please select a future date and time!');
+                    return;
+                }
+            } else if (pickupDate || pickupTime) {
+                 showToast('⚠️', 'Please fill both date and time!');
+                 return;
+            }
+
             const total = cart.reduce((s, i) => s + i.kg, 0);
             const rows = cart.map(i =>
                 `<div class="modal-item-row">
