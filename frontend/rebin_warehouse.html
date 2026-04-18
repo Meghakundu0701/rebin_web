@@ -1243,9 +1243,9 @@
             formData.append("file", file);
 
             try {
-                const res = await fetch("https://most-upgrades-out-jackets.trycloudflare.com/predict", {
+                // The Node server safely proxies this request to the internal ML model, ensuring it works on any live website!
+                const res = await fetch("/api/predict", {
                     method: "POST",
-                    headers: { "Bypass-Tunnel-Reminder": "true" },
                     body: formData
                 });
 

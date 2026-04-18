@@ -9,6 +9,16 @@ const cors = require('cors');
 const path = require('path');
 const { Server } = require('socket.io');
 const fs = require('fs');
+const { spawn } = require('child_process');
+
+try {
+  const pythonProcess = spawn('python', ['app.py'], { cwd: __dirname });
+  pythonProcess.stdout.on('data', data => console.log(`[ML Server] ${data}`));
+  pythonProcess.stderr.on('data', data => console.error(`[ML Server] ${data}`));
+  console.log('✅ ML Model server spawned automatically.');
+} catch (err) {
+  console.error('❌ Failed to spawn ML Model server:', err);
+}
 
 // ── Routes ──
 const authRoutes = require('./routes/auth');
@@ -48,6 +58,26 @@ app.use('/api', contactRoutes);
 // ── Health check ──
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
+});
+
+// ── Proxy for ML Model ──
+app.post('/api/predict', (req, res) => {
+  const options = {
+    hostname: '127.0.0.1',
+    port: 5000,
+    path: '/predict',
+    method: 'POST',
+    headers: req.headers
+  };
+  const proxyReq = http.request(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+    proxyRes.pipe(res);
+  });
+  proxyReq.on('error', (e) => {
+    console.error('ML Proxy Error:', e.message);
+    res.status(500).json({ error: 'ML server is down' });
+  });
+  req.pipe(proxyReq);
 });
 
 // ══════════════════════════════════════
